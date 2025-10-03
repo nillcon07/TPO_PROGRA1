@@ -236,3 +236,4 @@ while True:
             cambiar_estado(sistema)  
         case 5:
             devoluciones(sistema)
+
