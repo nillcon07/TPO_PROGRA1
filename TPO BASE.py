@@ -1,5 +1,7 @@
 #FUNCIONES PARA RESTRICCIONES#
 
+import datetime
+
 def validar_opciones(seleccion):
     """
     Función creada para validar la selección de opciones en el menú
@@ -15,10 +17,10 @@ def validar_nombre(nombre):
     """
     while True:
         valido = True
-        if nombre.strip() != '': #si no se ingresa nombre dara false, restriccion para que se ingrese de manera obligatoria un nombre#
+        if nombre.strip() == '': #si no se ingresa nombre dara false, restriccion para que se ingrese de manera obligatoria un nombre#
             valido = False
         for c in nombre:
-            if not (c.isalpha() or c == ' '): #en caso de que ambos sean falsos es invalido ya que no es una letra ni un espacio# queda false or false = false
+            if (not c.isalpha()) and (c != ' '): #en caso de que ambos sean falsos es invalido ya que no es una letra ni un espacio# queda false or false = false
                 valido = False
                 break
         if valido:
@@ -31,7 +33,7 @@ def validar_direccion(direc):
     """
     Función para validar que se haya ingresado una dirección y no un espacio vacío
     """
-    while direc.strip() != '': #si no se ingresa nombre dara false, restriccion para que se ingrese de manera obligatoria un nombre#
+    while direc.strip() == '': #si no se ingresa nombre dara false, restriccion para que se ingrese de manera obligatoria un nombre#
         direc = input("No se ha ingresado ninguna direccion, Reintente: ").capitalize()
     return direc
 
@@ -144,36 +146,46 @@ def cambiar_estado(matriz4):
             print("3 - En camino")
             print("4 - Entregado")
             print("5 - Cancelar pedido")
-            print("0 - Cancelar operación")
+            print("0 - Volver al menu")
             print()
             
             opcion = input("Seleccione una opción: ") #Pide al usuario que ingrese una de las opciones anteriores
             opcion = validar_opciones(opcion) #Valida que la entrada este entre 0 y 5
             
-            #Se le asigna el nuevo estado al pedido solicitado, si es 0 se sale de la operacion y el pedido queda con el estado original
-            if opcion == 0:
-                print("Operación cancelada.")
-            elif "Devuelto" in fila3[3]:  
-                print('No se puede cambiar el estado de un pedido que ya ha sido devuelto')
+            seguridad = input(f'Ustedes selecciono la opcion {opcion}. Desea confirmar esta opcion? [S/N]: ').lower()
 
-            elif opcion == 1:
-                fila3[3] = "Pendiente"
-            elif opcion == 2:
-                fila3[3] = "Despachado"
-            elif opcion == 3:
-                fila3[3] = "En camino"
-            elif opcion == 4:
-                fila3[3] = "Entregado"
-            elif opcion == 5:
-                if fila3[3] == "Entregado":
-                    print('No se puede marcar como cancelado el pedido ya que ha sido entregado')
-                else:
-                    fila3[3] = "Cancelado"
-            if opcion != 0 and "Devuelto" not in fila3[3]:  # Solo mostrar si no se canceló o no fue devuelto
-                print(f"Pedido marcado como {fila3[3]}.")
-                print(f" ✅ Pedido actualizado: {' | '.join(fila3)}")
-            break
-    
+            if seguridad == 's':
+                #Se le asigna el nuevo estado al pedido solicitado, si es 0 se sale de la operacion y el pedido queda con el estado original
+                if opcion == 0:
+                    print("Operación cancelada.")
+                elif "Devuelto" in fila3[3]:  
+                    print('No se puede cambiar el estado de un pedido que ya ha sido devuelto')
+
+                elif opcion == 1:
+                    fila3[3] = "Pendiente"
+                elif opcion == 2:
+                    fila3[3] = "Despachado"
+                elif opcion == 3:
+                    fila3[3] = "En camino"
+                elif opcion == 4:
+                    fila3[3] = "Entregado"
+                elif opcion == 5:
+                    if fila3[3] == "Entregado":
+                        print('No se puede marcar como cancelado el pedido ya que ha sido entregado')
+                    else:
+                        fila3[3] = "Cancelado"
+                if opcion != 0 and "Devuelto" not in fila3[3]:  # Solo mostrar si no se canceló o no fue devuelto
+                    print(f"Pedido marcado como {fila3[3]}.")
+                    print(f" ✅ Pedido actualizado: {' | '.join(fila3)}")
+                break
+            elif seguridad == 'n':
+                print('Accion cancelada por decision del usuario, volviendo al menu')
+                continue
+            else:
+                while seguridad != 'n' and seguridad != 's':
+                    print('Opcion incorrecta, seleccione S para si o N para no')
+                    seguridad = input(f'Ustedes selecciono la opcion {opcion}. Desea confirmar esta opcion? [S/N]: ').lower()
+
     if not encontrado:
         print("No se encontró un pedido con ese código. ❌ ")
 
@@ -212,7 +224,7 @@ while True:
     print("\n📦 --- Sistema de Envíos ---")
     print("\n1️⃣  Crear envío")
     print("2️⃣  Consultar envío")
-    print("3️⃣  Listar todos los envíos")
+    print("3️⃣  Listar los envíos")
     print("4️⃣  Cambiar estado de un envío")
     print("5️⃣  Realizar devolución del cliente")
     print("0️⃣  Salir")
@@ -231,6 +243,7 @@ while True:
         case 2:
             consultar_envio(sistema)
         case 3:
+            opcionA=int(input('1. Listar todos\n2. Listar por fecha\n3. Listar por estado\n4. Listar clientes\n5. Listar direcciones\n6. Listar codigos'))
             historial_envios(sistema)
         case 4:
             cambiar_estado(sistema)  
