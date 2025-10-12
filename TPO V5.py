@@ -41,7 +41,7 @@ def validar_nombre(nombre):
             break
         else:
             nombre = input("Ingreso inválido, recuerde que no se permite ingresar números ni símbolos. Ingrese el nombre del cliente: ")
-    return nombre.capitalize()
+    return nombre.title()
 
 def validar_direccion(direc):
     """
@@ -49,7 +49,7 @@ def validar_direccion(direc):
     """
     while direc.strip() == '': #si no se ingresa nombre dara false, restriccion para que se ingrese de manera obligatoria un nombre#
         direc = input("No se ha ingresado ninguna direccion, Reintente: ")
-    return direc.capitalize()
+    return direc.title()
 
 #FUNCIONES PRINCIPALES#
 
@@ -71,11 +71,11 @@ def agregar_envio(contador1, matriz1): #Contador sirve para q se hagan las itera
     
     codigo2, contador1 = codigo_envio(contador1)
 
-    cliente = input("Ingrese el nombre del cliente: ").capitalize()
+    cliente = input("Ingrese el nombre del cliente: ").title()
 
     cliente = validar_nombre(cliente)
 
-    direccion= input("Ingrese la direccion del cliente: ").capitalize()
+    direccion= input("Ingrese la direccion del cliente: ").title()
 
     direccion = validar_direccion(direccion)
 
@@ -227,7 +227,7 @@ def cambiar_estado(matriz4):
                     if matriz4[3][i] == "Entregado":
                         print('No se puede marcar como cancelado el pedido ya que ha sido entregado')
                     else:
-                        matriz4[3] = "Cancelado"
+                        matriz4[3][i] = "Cancelado"
                 if opcion != 0 and "Devuelto" not in matriz4[3][i]:  # Solo mostrar si no se canceló o no fue devuelto
                     print(f"Pedido marcado como {matriz4[3][i]}.")
                     print(f" ✅ Pedido actualizado: {matriz4[0][i]} | {matriz4[1][i]} | {matriz4[2][i]} | {matriz4[3][i]} | {matriz4[4][i]}")
