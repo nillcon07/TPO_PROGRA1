@@ -33,10 +33,11 @@ def validar_nombre(nombre):
         valido = True
         if nombre.strip() == '': #si no se ingresa nombre dara false, restriccion para que se ingrese de manera obligatoria un nombre#
             valido = False
-        for c in nombre:
-            if (not c.isalpha()) and (c != ' '): #en caso de que ambos sean falsos es invalido ya que no es una letra ni un espacio# queda false or false = false
-                valido = False
-                break
+        else:
+            for c in nombre:
+                if (not c.isalpha()) and (c != ' '): #en caso de que ambos sean falsos es invalido ya que no es una letra ni un espacio# queda false or false = false
+                    valido = False
+                    break
         if valido:
             break
         else:
@@ -47,8 +48,26 @@ def validar_direccion(direc):
     """
     Función para validar que se haya ingresado una dirección y no un espacio vacío
     """
-    while direc.strip() == '': #si no se ingresa nombre dara false, restriccion para que se ingrese de manera obligatoria un nombre#
-        direc = input("No se ha ingresado ninguna direccion, Reintente: ")
+
+    while True:
+        valido = True
+    
+        if direc.strip() == '': #si no se ingresa nombre dara false, restriccion para que se ingrese de manera obligatoria un nombre#
+            valido = False
+
+        else:
+            for c in direc:
+                if (not c.isalnum()) and (c != ' '): 
+                    valido = False
+                    break
+                
+        if valido:
+            break
+
+        else:
+            direc = input("Direccion invalida, reintente: ")
+
+
     return direc.title()
 
 #FUNCIONES PRINCIPALES#
