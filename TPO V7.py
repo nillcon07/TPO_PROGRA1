@@ -11,18 +11,13 @@ def validar_opciones(seleccion,rango1,rango2):
 
         try:
             seleccion = int(seleccion) #ya que el input es un string se intenta pasar a int para verificar si es correcto el ingreso#
+            assert rango1<=seleccion<=rango2 #debe estar detro del rango#
+            break
 
-            if seleccion < rango1 or seleccion > rango2:
-                print("Ingreso inválido, debe ser un número entre 0 y 5.")
-            
-            else:
-                break
-
-        except ValueError:
+        except (ValueError, AssertionError):
             print(f"Ingreso inválido, debe ser un número entre {rango1} y {rango2}.")
+            seleccion = input("Escoja una opcion: ")
         
-        seleccion = input("Escoja una opcion: ")
-
     return seleccion
 
 def validar_nombre(nombre):
@@ -31,11 +26,11 @@ def validar_nombre(nombre):
     """
     while True:
         valido = True
-        if nombre.strip() == '': #si no se ingresa nombre dara false, restriccion para que se ingrese de manera obligatoria un nombre#
+        if nombre.strip() == "": #si no se ingresa nombre dara false, restriccion para que se ingrese de manera obligatoria un nombre#
             valido = False
         else:
             for c in nombre:
-                if (not c.isalpha()) and (c != ' '): #en caso de que ambos sean falsos es invalido ya que no es una letra ni un espacio# queda false or false = false
+                if (not c.isalpha()) and (c != " "): #en caso de que ambos sean falsos es invalido ya que no es una letra ni un espacio# queda false or false = false
                     valido = False
                     break
         if valido:
@@ -52,12 +47,12 @@ def validar_direccion(direc):
     while True:
         valido = True
     
-        if direc.strip() == '': #si no se ingresa nombre dara false, restriccion para que se ingrese de manera obligatoria un nombre#
+        if direc.strip() == "": #si no se ingresa nombre dara false, restriccion para que se ingrese de manera obligatoria un nombre#
             valido = False
 
         else:
             for c in direc:
-                if (not c.isalnum()) and (c != ' '): 
+                if (not c.isalnum()) and (c != " "): 
                     valido = False
                     break
                 
@@ -73,13 +68,13 @@ def validar_direccion(direc):
 def formato_fechas():
     fecha_final = []
     fecha_original = datetime.datetime.now()
-    año = fecha_final.append(fecha_original.year)
-    mes = fecha_final.append(fecha_original.month)
-    dia = fecha_final.append(fecha_original.day)
-    hora = fecha_final.append(fecha_original.hour)
-    minuto = fecha_final.append(fecha_original.minute)
-    fecha = '/'.join(map(str, fecha_final[ :3]))
-    hora = ':'.join(map(str, fecha_final[3: ]))
+    fecha_final.append(fecha_original.year)
+    fecha_final.append(fecha_original.month)
+    fecha_final.append(fecha_original.day)
+    fecha_final.append(fecha_original.hour)
+    fecha_final.append(fecha_original.minute)
+    fecha = "/".join(map(str, fecha_final[ :3]))
+    hora = ":".join(map(str, fecha_final[3: ]))
     return fecha, hora
 
 #FUNCIONES PRINCIPALES#
@@ -113,7 +108,7 @@ def agregar_envio(contador1, matriz1): #Contador sirve para q se hagan las itera
     estado  = "Pendiente"
 
     fecha1, horario = formato_fechas()
-    fecha_con_horario = f'{fecha1} {horario}'
+    fecha_con_horario = f"{fecha1} {horario}"
 
     matriz1[0].append(codigo2)
     matriz1[1].append(cliente)
@@ -127,9 +122,9 @@ def agregar_envio(contador1, matriz1): #Contador sirve para q se hagan las itera
     
     print()
     for fila in matriz1:
-        print(fila[contador1 - 1], end=' | ')
+        print(fila[contador1 - 1], end=" | ")
     print()
-    print('✅ Envio agregado con exito')
+    print("✅ Envio agregado con exito")
     print("-" * 100)
     #Se informa el total de los clientes
     print("\n 👥 Total clientes (filas):", total_clientes)
@@ -143,18 +138,18 @@ def consultar_envio(matriz2):
     los datos del envío si existe, o un mensaje de error si no se encuentra.     
     """
     
-    tipo_de_consulta = ('por codigo', 'por cliente', 'por fecha')
+    tipo_de_consulta = ("por codigo", "por cliente", "por fecha")
     
-    tipo_elegido = int(input(f'1 - por codigo\n2 - por cliente\n3 - por fecha\nIngrese un numero para el tipo de consulta: '))
+    tipo_elegido = int(input(f"1 - por codigo\n2 - por cliente\n3 - por fecha\nIngrese un numero para el tipo de consulta: "))
     validar_opciones(tipo_elegido,1,3)
     if tipo_elegido == 1:
         #Pide el numero del pedido que se desea consultar
-        consulta = (input('Ingrese el codigo de tracking que desee consultar: ')).upper()
+        consulta = (input("Ingrese el codigo de tracking que desee consultar: ")).upper()
         print()
         #Utiliza el primer valor de la fila, que es el codigo del envío, para verificar si esta o no en la lista total de clientes
         encontrado = False
         if matriz2[0] == []:
-            print('No hay pedidos cargados aun, pulse 1 para añadir un pedido nuevo')
+            print("No hay pedidos cargados aun, pulse 1 para añadir un pedido nuevo")
         else:
             for fila2 in range(len(matriz2[0])):
                 if matriz2[0][fila2] == consulta:
@@ -165,17 +160,17 @@ def consultar_envio(matriz2):
                 print("✅ Pedido encontrado:")
                 print()
                 for fila in matriz2:
-                    print(fila[indice], end=' | ')
+                    print(fila[indice], end=" | ")
                 print()
             else:
                 print("❌ Código de envío incorrecto o inexistente")
     elif tipo_elegido == 2:
-        consulta = input('Ingrese el nombre del cliente: ').capitalize()
+        consulta = input("Ingrese el nombre del cliente: ").capitalize()
         print()
         cantidad_del_cliente = []
         encontrado = False
         if matriz2[1] == []:
-            print('No hay pedidos cargados aun, pulse 1 para añadir un pedido nuevo')
+            print("No hay pedidos cargados aun, pulse 1 para añadir un pedido nuevo")
         else:
             for fila2 in range(len(matriz2[1])):
                 if matriz2[1][fila2] == consulta:
@@ -184,7 +179,7 @@ def consultar_envio(matriz2):
                     print("✅ Pedido encontrado:")
                     print()
                     for fila in matriz2:
-                        print(fila[indice], end=' | ')
+                        print(fila[indice], end=" | ")
                     print()
                     print()
                     
@@ -192,18 +187,18 @@ def consultar_envio(matriz2):
                 print("❌ nombre del cliente incorrecto o inexistente")
     else: #Resolver esto
         pass
-        consulta = input('Ingrese la fecha que quiere consultar: ')
+        consulta = input("Ingrese la fecha que quiere consultar: ")
         
         
         print()
         
         encontrado = False
         if matriz2[4] == []:
-            print('No hay pedidos cargados aun, pulse 1 para añadir un pedido nuevo')
+            print("No hay pedidos cargados aun, pulse 1 para añadir un pedido nuevo")
         else:
             for fila2 in range(len(matriz2[4])):
                 fecha_str = matriz2[4][fila2]
-                fecha3 = datetime.strptime(fecha_str, '%d/%m/%y %h:%M')
+                fecha3 = datetime.strptime(fecha_str, "%d/%m/%y %h:%M")
                 valores = [fecha3.year , fecha3.month , fecha3.day , fecha3.hour , fecha3.minute]
                 
                 if valores[ :len(consulta_dividida)] == consulta_dividida:
@@ -211,7 +206,7 @@ def consultar_envio(matriz2):
                     
                     print("✅ Pedido encontrado:")
                     print()
-                    print(f'{matriz2[0][fila2]} | {matriz2[1][fila2]} | {matriz2[2][fila2]} | {matriz2[3][fila2]} | {matriz2[4]}')
+                    print(f"{matriz2[0][fila2]} | {matriz2[1][fila2]} | {matriz2[2][fila2]} | {matriz2[3][fila2]} | {matriz2[4]}")
                     print()
                     
             if encontrado == False:
@@ -246,7 +241,7 @@ def historial_envios(matriz3,opcion):
                 print(f"Total de Pedidos: {total}")
                 pass
             
-            case 3:#LISTAR POR ESTADO# #Resolver "devuelto"
+            case 3:#LISTAR POR ESTADO# 
                 estados = ("Pendiente","Despachado","En camino","Entregado","Cancelado","Devuelto")
 
                 seleccion = input("1 - Pendiente\n2 - Despachado\n3 - En camino \n4 - Entregado\n5 - Cancelado \n6 - Devuelto\n\nIngrese el nombre estado el cual desea ver el listado: ")
@@ -254,10 +249,19 @@ def historial_envios(matriz3,opcion):
                 seleccion = validar_opciones(seleccion,1,6)
 
                 seleccion = estados[seleccion-1]
+
                 print(f"Lista de pedidos con el estado {seleccion} 📦 : ")
                 print("-"*100)
                 
-                total_estado = [i for i in range(len(matriz3[3])) if matriz3[3][i] == seleccion] # guardo en una lista cada pedido que tenga el estado seleccionado#
+                #caso unico para devuelto ya que tiene un motivo y no es solo el estado#
+                if seleccion == "Devuelto":
+                    total_estado=[]
+                    for i in range (len(matriz3[3])): # se usa for in range para obtener el indice#
+                        if "Devuelto" in matriz3[3][i]: 
+                            total_estado.append(i) #se guarda el indice en la lista#
+                else:
+                    total_estado = [i for i in range(len(matriz3[3])) if matriz3[3][i] == seleccion] 
+                    # guardo en una lista de compresion cada indice del pedido que tenga el estado seleccionado# #se usa in range para tener los indices#
 
                 if len(total_estado) == 0:
                     print("No se encuentran pedidos con el estado seleccionado")
@@ -296,21 +300,21 @@ def cambiar_estado(matriz4):
                 opcion = input("Seleccione una opción: ") #Pide al usuario que ingrese una de las opciones anteriores
                 opcion = validar_opciones(opcion,0,5) #Valida que la entrada este entre 0 y 5
                 if opcion == 0:
-                    print('Volviendo al menu principal...')
+                    print("Volviendo al menu principal...")
                     break
-                estados_a_modificar = ('Pendiente','Despachado','En camino','Entregado','Cancelar pedido')
+                estados_a_modificar = ("Pendiente","Despachado","En camino","Entregado","Cancelar pedido")
                 estados_a_modificar = estados_a_modificar[opcion - 1]
 
-                seguridad = input(f'Usted seleccionó la opción {estados_a_modificar} y el codigo {codigo3}. ¿Desea confirmar esta opción? [Si/No]: ').lower()
+                seguridad = input(f"Usted seleccionó la opción {estados_a_modificar} y el codigo {codigo3}. ¿Desea confirmar esta opción? [Si/No]: ").lower()
 
-                if seguridad == 'si':
+                if seguridad == "si":
                     #Se le asigna el nuevo estado al pedido solicitado, si es 0 se sale de la operacion y el pedido queda con el estado original14
                     
                     if opcion == 0:
                         print("Operación cancelada.")
 
                     elif "Devuelto" in matriz4[3][i]:  
-                        print('No se puede cambiar el estado de un pedido que ya ha sido devuelto')
+                        print("No se puede cambiar el estado de un pedido que ya ha sido devuelto")
 
                     elif opcion == 1:
                         matriz4[3][i] = "Pendiente"
@@ -322,20 +326,20 @@ def cambiar_estado(matriz4):
                         matriz4[3][i] = "Entregado"
                     elif opcion == 5:
                         if matriz4[3][i] == "Entregado":
-                            print('No se puede marcar como cancelado el pedido ya que ha sido entregado')
+                            print("No se puede marcar como cancelado el pedido ya que ha sido entregado")
                         else:
                             matriz4[3][i] = "Cancelado"
                     if opcion != 0 and "Devuelto" not in matriz4[3][i]:  # Solo mostrar si no se canceló o no fue devuelto
                         print(f"Pedido marcado como {matriz4[3][i]}.")
                         print(f" ✅ Pedido actualizado: {matriz4[0][i]} | {matriz4[1][i]} | {matriz4[2][i]} | {matriz4[3][i]} | {matriz4[4][i]}")
                     break
-                elif seguridad == 'no':
-                    print('Acción cancelada por decisión del usuario, volviendo al menú interno...')
+                elif seguridad == "no":
+                    print("Acción cancelada por decisión del usuario, volviendo al menú interno...")
                     continue
                 else:
-                    while seguridad != 'no' and seguridad != 'si':
-                        print('Opción incorrecta, seleccione Si o No')
-                        seguridad = input(f'Usted seleccionó la opción {estados_a_modificar}. ¿Desea confirmar esta opción? [Si/No]: ').lower()
+                    while seguridad != "no" and seguridad != "si":
+                        print("Opción incorrecta, seleccione Si o No")
+                        seguridad = input(f"Usted seleccionó la opción {estados_a_modificar}. ¿Desea confirmar esta opción? [Si/No]: ").lower()
             break
     if not encontrado:
         print("No se encontró un pedido con ese código. ❌")
@@ -355,14 +359,14 @@ def devoluciones(matriz5):
         if matriz5[0][c] == codigo_devolucion:
             encontrado = True
             if "Devuelto" in matriz5[3][c]: #para evitar que se devuelva nuevamente un producto ya devuelto#
-                print('Este pedido ya ha sido devuelto anteriormente')
+                print("Este pedido ya ha sido devuelto anteriormente")
             elif matriz5[3][c] == "Entregado":
                 motivo = input("Ingrese el motivo de porque le han devuelto el pedido: ").capitalize()
-                matriz5[3][c] = "Devuelto"
+                matriz5[3][c] = f"Devuelto, causa: {motivo}"
                 print(f"Devolucion registrada: {matriz5[3][c]}")
                 
             else:
-                print('El envio todavia no ha sido entregado por lo que no se puede realizar la devolucion')
+                print("El envio todavia no ha sido entregado por lo que no se puede realizar la devolucion")
         break
 
     if not encontrado:
@@ -382,21 +386,21 @@ while True:
     print("5️⃣  Realizar devolución del cliente")
     print("0️⃣  Salir")
     
-    opcion = input('\nEscoja una opcion: ')
+    opcion = input("\nEscoja una opcion: ")
     print()
     
     opcion = validar_opciones(opcion,0,5)
         
     match opcion:
         case 0:
-            print('Nos vemos! 👋 ')
+            print("Nos vemos! 👋 ")
             break
         case 1:
             n = agregar_envio(n, sistema)
         case 2:
             consultar_envio(sistema)
         case 3:
-            print('1. Listar todos\n2. Listar por fecha\n3. Listar por estado de envio')
+            print("1. Listar todos\n2. Listar por fecha\n3. Listar por estado de envio")
             listar = input("\nEscoja una opcion: ")
             listar = validar_opciones(listar,1,3)
             historial_envios(sistema,listar)
