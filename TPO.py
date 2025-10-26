@@ -224,19 +224,16 @@ def consultar_envio(matriz2):
             if encontrado == False:
                 print("❌ fecha incorrecta o inexistente")
 
-def historial_envios(matriz3):
+def historial_envios(matriz3,opcion):
     """
     Muestra todos los envíos registrados en el sistema.
     Si no hay envíos registrados muestra un mensaje informativo.
     Si hay envíos, los lista todos mostrando código, cliente, dirección y estado.    
     """
-
+    
     if matriz3[0] == []:
-        print("No Hay pedidos aun")
+        print("\nNo Hay pedidos aun")
     else:
-        print("1. Listar todos\n2. Listar por fecha\n3. Listar por estado de envio")
-        opcion = input("\nEscoja una opcion: ")
-        opcion = validar_opciones(opcion,1,3)
         match int(opcion):
             case 1: #LISTAR TODo#
                 print("Lista de envíos 📦:")
@@ -251,75 +248,92 @@ def historial_envios(matriz3):
                 print("-" * 100)
                 print(f"Total de Pedidos: {total}")
                 
-                estados = ["Pendiente", "Despachado", "En camino", "Entregado", "Cancelado", "Devuelto"]
+                estados = ("Pendiente", "Despachado", "En camino", "Entregado", "Cancelado", "Devuelto")
+                
                 conteo = {estado: 0 for estado in estados}
                 
-                total_envios = len(matriz3[0])  # cantidad total de pedidos cargados
-                
-                if total_envios == 0:
-                    print("\n️ No hay envíos cargados todavía.")
-                    return
                 
                 # Recorremos todos los pedidos registrados
-                for i in range(total_envios):
+                for i in range(total):
                     estado = matriz3[3][i]
                     for e in estados:
                         if e in estado:
                             conteo[e] += 1
 
-                print("\n=== ETADÍSTICAS DE ENVÍOS ===")
+                print("\n ESTADÍSTICAS DE ENVÍOS")
                 for estado, cantidad in conteo.items():
-                    porcentaje = (cantidad / total_envios) * 100
-                    print(f"{estado:<12}: {cantidad:>3} pedidos ({porcentaje:5.1f}%)")
-                print("=================================\n")
-
-
-            case 2: ###FALTA###
-                print("Lista de pedidos segun fecha 📦 : ")
+                    porcentaje = (cantidad / total) * 100
+                    print(f"{estado:<12} | {cantidad:>3} pedidos | Porcentaje: {porcentaje:5.1f}%")
                 print("-"*100)
+                
+            case 2: ###FALTA###
+                print("Lista de pedidos segun fecha 📦 ")
+                
                 fechas = ("mes", "dia", "hora")
                 
-                seleccion = input("1 - mes \n2 - dia\n3 - hora\nIngrese con que parametro desea listar: ")
+                seleccion = input("1 - mes \n2 - dia\n3 - hora\nIngrese el parametro por el cual desea listar: ")
+                
                 
                 seleccion = validar_opciones(seleccion,1,3)
                 
                 seleccion = fechas[seleccion - 1]
                 
-                print(f"Lista de pedidos con el parametro {seleccion} 📦 : ")
-                
-                print("-" * 100)
                 
                 if seleccion == "mes":
-                    mes_seleccionado = int(input("Ingrese el numero del mes que desea listar: "))
+                    mes_seleccionado = input("Ingrese el numero del mes que desea listar: ")
                     mes_seleccionado = validar_opciones(mes_seleccionado,1,12)
+                    
+                    print("-"*100)
                     
                     total_mes = []
                     for i in range(len(matriz3[4])):
                         if matriz3[4][i][1] == mes_seleccionado:
                             total_mes.append(i)
+                    if total_mes == []:
+                        print("\nNo Hay pedidos aun con ese mes")
+                    else:
+                        print(f"Lista de pedidos con el mes {mes_seleccionado} 📦 : ")
                     for indice in total_mes:
                         print(f"{matriz3[0][indice]:^10} | {matriz3[1][indice]:^15} | {matriz3[2][indice]:^15} | {matriz3[3][indice]:^12}", end=" | ")
                         print("/".join(map(str, matriz3[4][indice][ :3])), end=" ")
                         print(":".join(f"{x:02d}" for x in matriz3[4][indice][3: ]))
-                elif seleccion == "dia":
-                    dia_seleccionado = int(input("Ingrese el numero del dia que desea listar: "))
                     
+                elif seleccion == "dia":
+                    dia_seleccionado = input("Ingrese el numero del dia que desea listar: ")
+                    
+                    
+                    dia_seleccionado = validar_opciones(dia_seleccionado,1,31)
+                    
+                    print("-"*100)
                     
                     total_dia = []
                     for i in range(len(matriz3[4])):
-                        if matriz3[4][i][2] == dia_seleccionado:
+                        if matriz3[4][i][0] == dia_seleccionado:
                             total_dia.append(i)
+                    if total_dia == []:
+                        print("\nNo Hay pedidos aun con ese dia")
+                    else:
+                        print(f"Lista de pedidos con el dia {dia_seleccionado}📦 : ")
                     for indice in total_dia:
                         print(f"{matriz3[0][indice]:^10} | {matriz3[1][indice]:^15} | {matriz3[2][indice]:^15} | {matriz3[3][indice]:^12}", end=" | ")
                         print("/".join(map(str, matriz3[4][indice][ :3])), end=" ")
                         print(":".join(f"{x:02d}" for x in matriz3[4][indice][3: ]))
                 else:
-                    hora_seleccionada = int(input("Ingrese el numero de la hora que desea listar: "))
+                    hora_seleccionada = input("Ingrese el numero de la hora que desea listar (desde las 0 hs hasta las 23 hs): ")
+                    
+                    hora_seleccionada = hora_seleccionada[ :2]
+                    hora_seleccionada = validar_opciones(hora_seleccionada,0,23)
+                    
+                    print("-"*100)
                     
                     total_hora = []
                     for i in range(len(matriz3[4])):
                         if matriz3[4][i][3] == hora_seleccionada:
                             total_hora.append(i)
+                    if total_hora == []:
+                        print("\nNo Hay pedidos aun con esa hora")
+                    else:
+                        print(f"Lista de pedidos con el hora {hora_seleccionada}📦 : ")
                     for indice in total_hora:
                         print(f"{matriz3[0][indice]:^10} | {matriz3[1][indice]:^15} | {matriz3[2][indice]:^15} | {matriz3[3][indice]:^12}", end=" | ")
                         print("/".join(map(str, matriz3[4][indice][ :3])), end=" ")
@@ -494,7 +508,10 @@ while True:
         case 2:
             consultar_envio(sistema)
         case 3:
-            historial_envios(sistema)
+            print("1. Listar todos\n2. Listar por fecha\n3. Listar por estado de envio")
+            listar = input("\nEscoja una opcion: ")
+            listar = validar_opciones(listar,1,3)
+            historial_envios(sistema,listar)
         case 4:
             cambiar_estado(sistema)  
         case 5:
