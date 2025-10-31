@@ -1,12 +1,11 @@
 #FUNCIONES PARA RESTRICCIONES#
 
-import datetime
+import datetime, json, os
 
 def validar_opciones(seleccion,rango1,rango2):
     """
     Función creada para validar la selección de opciones en el menú
     """
-
     while True:
         try:
             seleccion = int(seleccion) #ya que el input es un string se intenta pasar a int para verificar si es correcto el ingreso#
@@ -14,12 +13,12 @@ def validar_opciones(seleccion,rango1,rango2):
             break
         
         except ValueError:
-            print(f"Ingreso inválido, usted ingreso un valor NO entero.")
+            print(f"\nIngreso inválido, usted ingreso un valor NO entero.")
         except AssertionError:
-            print(f"Ingreso invalido, usted ingreso un valor fuera de los rangos establecidos, ")
+            print(f"\nIngreso invalido, usted ingreso un valor fuera de los rangos establecidos, ")
             
-        print(f'Recuerde que debe ser un entero entre {rango1} y {rango2}')
-        seleccion = input("Escoja una opcion: ")
+        print(f'\nRecuerde que debe ser un entero entre {rango1} y {rango2}\n')
+        seleccion = input("Escoja una opcion (recuerde que sigue en la misma seccion): ")
         
     return seleccion
 
@@ -69,6 +68,7 @@ def validar_direccion(direc):
     return direc.title()
 
 def validar_horario(msj="Ingrese la consulta: "):
+    """ Funcion para formatear el ingreso de una fecha a traves de / o - """
     while True:
         consulta = input(msj)
         fecha = consulta.replace("/", " ").replace(":", " ").replace("-", " ")
@@ -83,6 +83,7 @@ def validar_horario(msj="Ingrese la consulta: "):
     return lista_numeros
 
 def formato_fechas():
+    """ Funcion para sacar cada parametro de fecha y horario y que se agregue a una lista para agregarlo a la matriz principal """
     fecha_final = []
     fecha_original = datetime.datetime.now()
     fecha_final.append(fecha_original.day)
@@ -149,7 +150,7 @@ def agregar_envio(contador1, matriz1): #Contador sirve para q se hagan las itera
 
 def consultar_envio(matriz2):
     """
-    Busca y muestra la información de un envío específico por su código de tracking.
+    Busca y muestra la información de un envío específico por su código de tracking, por cliente o por fecha.
     Solicita al usuario el código de tracking, busca en la matriz y muestra
     los datos del envío si existe, o un mensaje de error si no se encuentra.     
     """
@@ -202,13 +203,11 @@ def consultar_envio(matriz2):
             if encontrado == False:
                 print("❌ nombre del cliente incorrecto o inexistente")
         
-        else: #Resolver esto
+        else: 
             lista_fecha = validar_horario(msj="Ingrese la fecha a consultar: ")
             print()
             encontrado = False
             for fila in range(len(matriz2[4])):
-                
-                print(matriz2[4][fila])
                 if matriz2[4][fila] == lista_fecha:
                     encontrado = True
                     indice = fila
@@ -219,11 +218,11 @@ def consultar_envio(matriz2):
                     print("/".join(map(str, matriz2[4][indice][ :3])), end=" ")
                     print(":".join(f"{x:02d}" for x in matriz2[4][indice][3: ]))
             if encontrado == False:
-                print("❌ fecha incorrecta o inexistente")
+                print("\n❌ fecha incorrecta o inexistente")
 
 def historial_envios(matriz3,opcion):
     """
-    Muestra todos los envíos registrados en el sistema.
+    Muestra todos los envíos registrados en el sistema, filtra por estado de pedido o fecha.
     Si no hay envíos registrados muestra un mensaje informativo.
     Si hay envíos, los lista todos mostrando código, cliente, dirección y estado.    
     """
@@ -263,7 +262,7 @@ def historial_envios(matriz3,opcion):
                     print(f"{estado:<12} | {cantidad:>3} pedidos | Porcentaje: {porcentaje:5.1f}%")
                 print("-"*100)
                 
-            case 2: ###FALTA###
+            case 2: ###POR FECHA###
                 print("Lista de pedidos segun fecha 📦 ")
                 
                 fechas = ("mes", "dia", "hora")
@@ -341,14 +340,15 @@ def historial_envios(matriz3,opcion):
             case 3:#LISTAR POR ESTADO# 
                 estados = ("Pendiente","Despachado","En camino","Entregado","Cancelado","Devuelto")
 
-                seleccion = input("1 - Pendiente\n2 - Despachado\n3 - En camino \n4 - Entregado\n5 - Cancelado \n6 - Devuelto\n\nIngrese el nombre estado el cual desea ver el listado: ")
+                seleccion = input("1 - Pendiente\n2 - Despachado\n3 - En camino \n4 - Entregado\n5 - Cancelado \n6 - Devuelto\n\nIngrese el valor que representa el estado el cual desea ver el listado: ")
 
                 seleccion = validar_opciones(seleccion,1,6)
 
                 seleccion = estados[seleccion-1]
 
-                print(f"Lista de pedidos con el estado {seleccion} 📦 : ")
                 print("-"*100)
+
+                print(f"Lista de pedidos con el estado {seleccion} 📦 : ")
                 
                 #caso unico para devuelto ya que tiene un motivo y no es solo el estado#
                 if seleccion == "Devuelto":
@@ -368,7 +368,8 @@ def historial_envios(matriz3,opcion):
                         print(f"{matriz3[0][i]:^10} | {matriz3[1][i]:^15} | {matriz3[2][i]:^15} | {matriz3[3][i]:^12}", end=" | ")
                         print("/".join(map(str, matriz3[4][i][ :3])), end=" ")
                         print(":".join(f"{x:02d}" for x in matriz3[4][i][3: ]))
-                    print()
+                    print("-"*100)
+
 
 def cambiar_estado(matriz4):
     """
@@ -506,11 +507,16 @@ while True:
             consultar_envio(sistema)
         case 3:
             print("1. Listar todos\n2. Listar por fecha\n3. Listar por estado de envio")
-            listar = input("\nEscoja una opcion: ")
+            listar = input("\nEscoja una opcion:")
             listar = validar_opciones(listar,1,3)
             historial_envios(sistema,listar)
         case 4:
             cambiar_estado(sistema)  
         case 5:
-
             devoluciones(sistema)
+
+try:
+    archivo = open("pedidos.json","wt")
+    datos = json.dump(sistema,archivo)
+except OSError as error:
+    print(f'Ocurrio un error al intentar abrir el archivo: {error}')
