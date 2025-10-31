@@ -113,11 +113,11 @@ def agregar_envio(contador1, matriz1): #Contador sirve para q se hagan las itera
     
     codigo2, contador1 = codigo_envio(contador1)
 
-    cliente = input("Ingrese el nombre del cliente: ").title()
+    cliente = input("\nIngrese el nombre del cliente: ").title()
 
     cliente = validar_nombre(cliente)
 
-    direccion= input("Ingrese la direccion del cliente: ").title()
+    direccion= input("\nIngrese la direccion del cliente: ").title()
 
     direccion = validar_direccion(direccion)
 
@@ -136,15 +136,14 @@ def agregar_envio(contador1, matriz1): #Contador sirve para q se hagan las itera
     total_clientes = len(matriz1[1])
     
     print()
+    print("-" * 100)
     for fila in matriz1[ :-1]:
         print(fila[contador1 - 1], end=" | ")
     print(f"{"/".join(map(str, matriz1[4][contador1 - 1][ :3]))}", end=" ")
     print(":".join(f"{x:02d}" for x in matriz1[4][contador1 - 1][3: ]))
-    print()
-    print("✅ Envio agregado con exito")
     print("-" * 100)
-    #Se informa el total de los clientes
-    print("\n 👥 Total clientes (filas):", total_clientes)
+    print("✅ Envio agregado con exito")
+    print(f"\n👥 Total clientes (filas): {total_clientes}") #Se informa el total de los clientes
     
     return contador1 # devolvemos contador actualizado 
 
@@ -174,51 +173,42 @@ def consultar_envio(matriz2):
                     encontrado = True
                     indice = fila2
                     break
-            if encontrado:
-                print("✅ Pedido encontrado:")
-                print()
-                for fila in matriz2[ :-1]:
-                    print(fila[indice], end=" | ")
-                print("/".join(map(str, matriz2[4][indice][ :3])), end=" ")
-                print(":".join(f"{x:02d}" for x in matriz2[4][indice][3: ]))
-                print()
-            else:
-                print("❌ Código de envío incorrecto o inexistente")
         
         elif tipo_elegido == 'Por cliente':
-            consulta = input("Ingrese el nombre del cliente: ").capitalize()
+            consulta = input("\nIngrese el nombre del cliente: ").title()
             print()
             encontrado = False
             for fila2 in range(len(matriz2[1])):
                 if matriz2[1][fila2] == consulta:
                     encontrado = True
                     indice = fila2
-                    print("✅ Pedido encontrado:")
-                    print()
-                    for fila in matriz2[ :-1]:
-                        print(fila[indice], end=" | ")
-                    print("/".join(map(str, matriz2[4][indice][ :3])), end=" ")
-                    print(":".join(f"{x:02d}" for x in matriz2[4][indice][3: ]))
-                    print()
-            if encontrado == False:
-                print("❌ nombre del cliente incorrecto o inexistente")
+                    break
         
         else: 
-            lista_fecha = validar_horario(msj="Ingrese la fecha a consultar: ")
+            lista_fecha = validar_horario(msj="Ingrese la fecha a consultar (formato: 00/00/0000 hh:mm o 00-00-0000 hh:mm): ")
             print()
             encontrado = False
             for fila in range(len(matriz2[4])):
                 if matriz2[4][fila] == lista_fecha:
                     encontrado = True
                     indice = fila
-                    print("✅ Pedido encontrado:")
-                    print()
-                    for fila in matriz2[ :-1]:
-                        print(fila[indice], end=" | ")
-                    print("/".join(map(str, matriz2[4][indice][ :3])), end=" ")
-                    print(":".join(f"{x:02d}" for x in matriz2[4][indice][3: ]))
-            if encontrado == False:
-                print("\n❌ fecha incorrecta o inexistente")
+                    break
+
+        if encontrado:
+            print("✅ Pedido encontrado:")
+            print("-" * 100)
+            for fila in matriz2[:-1]:
+                print(fila[indice], end=" | ")
+            print("/".join(map(str, matriz2[4][indice][:3])), end=" ")
+            print(":".join(f"{x:02d}" for x in matriz2[4][indice][3:]))
+            print("-" * 100)
+        else:
+            errores = {
+                'Por codigo': "❌ Codigo de envio incorrecto o inexistente",
+                'Por cliente': "❌ Nombre del cliente incorrecto o inexistente",
+                'Por fecha': "❌ Fecha incorrecta o inexistente"
+            }
+            print(errores[tipo_elegido])
 
 def historial_envios(matriz3,opcion):
     """
@@ -274,12 +264,9 @@ def historial_envios(matriz3,opcion):
                 
                 seleccion = fechas[seleccion - 1]
                 
-                
                 if seleccion == "mes":
                     mes_seleccionado = input("Ingrese el numero del mes que desea listar: ")
                     mes_seleccionado = validar_opciones(mes_seleccionado,1,12)
-                    
-                    print("-"*100)
                     
                     total_mes = []
                     for i in range(len(matriz3[4])):
@@ -288,7 +275,8 @@ def historial_envios(matriz3,opcion):
                     if total_mes == []:
                         print("\nNo Hay pedidos aun con ese mes")
                     else:
-                        print(f"Lista de pedidos con el mes {mes_seleccionado} 📦 : ")
+                        print(f"\nLista de pedidos con el mes {mes_seleccionado} 📦 : ")
+                        print("-"*100)
                     for indice in total_mes:
                         print(f"{matriz3[0][indice]:^10} | {matriz3[1][indice]:^15} | {matriz3[2][indice]:^15} | {matriz3[3][indice]:^12}", end=" | ")
                         print("/".join(map(str, matriz3[4][indice][ :3])), end=" ")
@@ -300,7 +288,6 @@ def historial_envios(matriz3,opcion):
                     
                     dia_seleccionado = validar_opciones(dia_seleccionado,1,31)
                     
-                    print("-"*100)
                     
                     total_dia = []
                     for i in range(len(matriz3[4])):
@@ -309,7 +296,8 @@ def historial_envios(matriz3,opcion):
                     if total_dia == []:
                         print("\nNo Hay pedidos aun con ese dia")
                     else:
-                        print(f"Lista de pedidos con el dia {dia_seleccionado}📦 : ")
+                        print(f"\nLista de pedidos con el dia {dia_seleccionado}📦 : ")
+                        print("-"*100)
                     for indice in total_dia:
                         print(f"{matriz3[0][indice]:^10} | {matriz3[1][indice]:^15} | {matriz3[2][indice]:^15} | {matriz3[3][indice]:^12}", end=" | ")
                         print("/".join(map(str, matriz3[4][indice][ :3])), end=" ")
@@ -320,8 +308,6 @@ def historial_envios(matriz3,opcion):
                     hora_seleccionada = hora_seleccionada[ :2]
                     hora_seleccionada = validar_opciones(hora_seleccionada,0,23)
                     
-                    print("-"*100)
-                    
                     total_hora = []
                     for i in range(len(matriz3[4])):
                         if matriz3[4][i][3] == hora_seleccionada:
@@ -329,7 +315,9 @@ def historial_envios(matriz3,opcion):
                     if total_hora == []:
                         print("\nNo Hay pedidos aun con esa hora")
                     else:
-                        print(f"Lista de pedidos con el hora {hora_seleccionada}📦 : ")
+                        print(f"\nLista de pedidos con el hora {hora_seleccionada}📦 : ")
+                        print("-"*100)
+
                     for indice in total_hora:
                         print(f"{matriz3[0][indice]:^10} | {matriz3[1][indice]:^15} | {matriz3[2][indice]:^15} | {matriz3[3][indice]:^12}", end=" | ")
                         print("/".join(map(str, matriz3[4][indice][ :3])), end=" ")
@@ -346,10 +334,9 @@ def historial_envios(matriz3,opcion):
 
                 seleccion = estados[seleccion-1]
 
-                print("-"*100)
 
-                print(f"Lista de pedidos con el estado {seleccion} 📦 : ")
-                
+                print(f"\nLista de pedidos con el estado {seleccion} 📦 : ")
+                print("-"*100)
                 #caso unico para devuelto ya que tiene un motivo y no es solo el estado#
                 if seleccion == "Devuelto":
                     total_estado=[]
@@ -461,19 +448,22 @@ def devoluciones(matriz5):
     codigo_devolucion = input("Ingrese el codigo del pedido a devolver: ").upper()
     
     encontrado = False
+
     for c in range(len(matriz5[0])):
         if matriz5[0][c] == codigo_devolucion:
             encontrado = True
             if "Devuelto" in matriz5[3][c]: #para evitar que se devuelva nuevamente un producto ya devuelto#
-                print("Este pedido ya ha sido devuelto anteriormente")
+                print("\nEste pedido ya ha sido devuelto anteriormente")
             elif matriz5[3][c] == "Entregado":
                 motivo = input("Ingrese el motivo de porque le han devuelto el pedido: ").capitalize()
                 matriz5[3][c] = f"Devuelto, causa: {motivo}"
+                print("-"*100)
                 print(f"Devolucion registrada: {matriz5[3][c]}")
-                
+                print("-"*100)             
             else:
-                print("El envio todavia no ha sido entregado por lo que no se puede realizar la devolucion")
-        break
+                print("\nEl envio todavia no ha sido entregado por lo que no se puede realizar la devolucion")
+
+            break
 
     if not encontrado:
         print("Pedido no encontrado ❌ ")
@@ -518,5 +508,7 @@ while True:
 try:
     archivo = open("pedidos.json","wt")
     datos = json.dump(sistema,archivo)
+    archivo.close()
 except OSError as error:
     print(f'Ocurrio un error al intentar abrir el archivo: {error}')
+
