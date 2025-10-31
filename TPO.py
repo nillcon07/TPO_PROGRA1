@@ -8,20 +8,18 @@ def validar_opciones(seleccion,rango1,rango2):
     """
 
     while True:
-
         try:
             seleccion = int(seleccion) #ya que el input es un string se intenta pasar a int para verificar si es correcto el ingreso#
             assert rango1<=seleccion<=rango2 #debe estar detro del rango#
             break
-
+        
         except ValueError:
             print(f"Ingreso inválido, usted ingreso un valor NO entero.")
         except AssertionError:
             print(f"Ingreso invalido, usted ingreso un valor fuera de los rangos establecidos, ")
-
+            
         print(f'Recuerde que debe ser un entero entre {rango1} y {rango2}')
         seleccion = input("Escoja una opcion: ")
-
         
     return seleccion
 
@@ -206,11 +204,10 @@ def consultar_envio(matriz2):
         
         else: #Resolver esto
             lista_fecha = validar_horario(msj="Ingrese la fecha a consultar: ")
-            print(lista_fecha)
             print()
             encontrado = False
             for fila in range(len(matriz2[4])):
-                print(fila)
+                
                 print(matriz2[4][fila])
                 if matriz2[4][fila] == lista_fecha:
                     encontrado = True
