@@ -65,7 +65,7 @@ def validar_horario(msj="Ingrese la consulta: "):
         fecha = consulta.replace("/", " ").replace(":", " ").replace("-", " ")
         try:
             d, m, y, hora, minuto = map(int, fecha.split())
-            lista_numeros = f"{d}/{m}/{y} {hora}:{minuto}"
+            lista_numeros = f"{d:02d}/{m:02d}/{y} {hora:02d}:{minuto:02d}"
             break
         except ValueError:
             print("ingreso invalido, debe ser una fecha del estilo (DD/MM/AAAA hh:mm), o (DD-MM-AAAA hh:mm)")
@@ -102,6 +102,23 @@ def separar_campos(linea):
     campos = linea.split(";")
     return campos
 
+def sacar_acentos(entrada):
+    acentos = (
+    ("á", "a"),
+    ("é","e"),
+    ("í","i"),
+    ("ó","o"),
+    ("ú","u"),
+    ("Á", "A"),
+    ("É","E"),
+    ("Í","I"),
+    ("Ó","O"),
+    ("Ú","U")
+    )
+    for i, j in acentos:
+        entrada = entrada.replace(i,j)
+    return entrada
+
 #FUNCIONES PRINCIPALES#
 
 def codigo_envio(numero):
@@ -122,21 +139,25 @@ def agregar_envio(contador1): #Contador sirve para q se hagan las iteraciones, l
     
     codigo2, contador1 = codigo_envio(contador1)
     contador1 = str(contador1)
-
+    
     cliente = input("📨​  --- Crear envío ---\nIngrese el nombre del cliente: ").title()
-
+    
     cliente = validar_nombre(cliente)
-
+    cliente = sacar_acentos(cliente)
+    
     direccion= input("\nIngrese la direccion del cliente: ").title()
-
+    
     direccion = validar_direccion(direccion)
-
+    direccion = sacar_acentos(direccion)
+    
     provincia = input("\nIngrese la provincia de destino: ").title()
-
-    provincias = ("Buenos Aires", "Catamarca", "Chaco", "Chubut", "Cordoba", "Corrientes", "Entre Rios", "Formosa", "Jujuy", "La Pampa", "La Rioja", "Mendoza", "Misiones", "Neuquen", "Ro Negro", "Salta", "San Juan", "San Luis", "Santa Cruz", "Santa Fe", "Santiago del Estero", "Tierra del Fuego", "Tucuman")
-
+    provincia = sacar_acentos(provincia)
+    
+    provincias = ("Buenos Aires", "Catamarca", "Chaco", "Chubut", "Cordoba", "Corrientes", "Entre Rios", "Formosa", "Jujuy", "La Pampa", "La Rioja", "Mendoza", "Misiones", "Neuquen", "Rio Negro", "Salta", "San Juan", "San Luis", "Santa Cruz", "Santa Fe", "Santiago del Estero", "Tierra del Fuego", "Tucuman")
+    
     while provincia not in provincias:
         provincia = input("\nIngreso invalido, reintente\nIngrese la provincia de destino: ").title()
+        provincia = sacar_acentos(provincia)
 
     estado  = "Pendiente"
 
@@ -176,8 +197,8 @@ def consultar_envio():
         if tipo_elegido == "Por codigo":
             consulta = (input("Ingrese el codigo de tracking que desee consultar: ")).upper()
             print()
-            while consulta[ :5] != "ENV00":
-                print("Ingreso incorrecto, intente nuevamente")
+            while consulta[ :3] != "ENV" or not consulta[3: ].isdigit() or len(consulta[3: ]) < 3:
+                print("Ingreso incorrecto (debe tener al menos 3 digitos), intente nuevamente")
                 consulta = (input("Ingrese el codigo de tracking que desee consultar: ")).upper()
             encontrado = False
             for linea in arch:
@@ -186,13 +207,21 @@ def consultar_envio():
                     if linea[1] == consulta:
                         encontrado = True
                         print("✅ Pedido encontrado:")
+                        print("-"*100)
                         print(f"{linea[1]:^10} | {linea[2]:^15} | {linea[3]:^15} | {linea[4]:^15} | {linea[5]:^15} | {linea[6]:^15}")
+                        print("-"*100)
                         break
+                else:
+                    print("\nActualmente no hay pedidos cargados")
+                    print("-"*100)
+                    encontrado = True
+                    break
             if encontrado == False:
                 print("\n No hay pedidos con ese codigo de envio")
             consultar_envio()
         elif tipo_elegido == "Por cliente":
             consulta = input("\nIngrese el nombre del cliente: ").title()
+            consulta = sacar_acentos(consulta)
             print()
             encontrado = False
             for linea in arch:
@@ -201,7 +230,14 @@ def consultar_envio():
                     if linea[2] == consulta:
                         encontrado = True
                         print("✅ Pedido encontrado:")
+                        print("-"*100)
                         print(f"{linea[1]:^10} | {linea[2]:^15} | {linea[3]:^15} | {linea[4]:^15} | {linea[5]:^15} | {linea[6]:^15}")
+                else:
+                    print("\nActualmente no hay pedidos cargados")
+                    print("-"*100)
+                    encontrado = True
+                    break
+            print("-"*100)
             if encontrado == False:
                 print("\n No hay pedidos con ese nombre de cliente")
             consultar_envio()
@@ -215,12 +251,20 @@ def consultar_envio():
                     linea = separar_campos(linea)
                     if linea[6] == cadena_fecha:
                         print("✅ Pedido encontrado:")
+                        print("-"*100)
                         encontrado = True
                         print(f"{linea[1]:^10} | {linea[2]:^15} | {linea[3]:^15} | {linea[4]:^15} | {linea[5]:^15} | {linea[6]:^15}")
+                else:
+                    print("\nActualmente no hay pedidos cargados")
+                    print("-"*100)
+                    encontrado = True
+                    break
+            print("-"*100)
             if encontrado == False:
                 print("\n No hay pedidos con esa fecha")
             consultar_envio()
         else:
+            print("\nVolviendo al menu principal...")
             pass
     except FileNotFoundError as mensaje:
         print("No se pudo abrir el archivo", mensaje)
@@ -267,7 +311,7 @@ def historial_envios():
                     print("Actualmente no existen pedidos en el sistema")
                 print("-" * 100)
                 print(f"Total de Pedidos: {total}")
-                    
+                print()
             case 2: ###POR FECHA###
                 print("Lista de pedidos segun fecha 📦 ")
                 print("-" * 100)
@@ -306,6 +350,7 @@ def historial_envios():
                     if linea.strip() != "":
                         campos = separar_campos(linea)
                         if campos[6][rango1:rango2] == f"{valor:02d}":
+                            print("-"*100)
                             print(f"{campos[1]:^10} | {campos[2]:^15} | {campos[3]:^15} | {campos[4]:^12} | {campos[5]:^10} | {campos[6]:^10}")
                             encontrado = True
                             
@@ -352,12 +397,13 @@ def historial_envios():
                 encontrado = False
                 
                 print(f"\nLista de pedidos provenientes de {seleccion} 📦 : ")
-                print("-"*100)
+                
                 
                 for linea in arch:
                     if linea.strip() != "":
                         campos = separar_campos(linea)
                         if campos[4] == seleccion:
+                            print("-"*100)
                             print(f"{campos[1]:^10} | {campos[2]:^15} | {campos[3]:^15} | {campos[4]:^12} | {campos[5]:^10} | {campos[6]:^10}")
                             encontrado = True
                 
@@ -424,81 +470,94 @@ def cambiar_estado():
     Permite modificar el estado de un envío existente.
     Valida que no se pueda cancelar un pedido ya entregado.
     """
-    codigo3 = input("🔄 --- Cambiar estado ---\nIngrese el código de envio: ").upper()
-    
+    codigo_objetivo = input("🔄 --- Cambiar estado ---\nIngrese el código de envío a modificar: ").upper()
+    while codigo_objetivo[ :3] != "ENV" or not codigo_objetivo[3: ].isdigit() or len(codigo_objetivo[3: ]) < 3:
+        print("Ingreso incorrecto (debe tener al menos 3 digitos), intente nuevamente")
+        codigo_objetivo = (input("Ingrese el codigo de tracking que desee consultar: ")).upper()
     encontrado = False
-    # Recorremos las columnas (cada envío)
-    for i in range(len(matriz4[0])):
-        if matriz4[0][i] == codigo3:
-            encontrado = True
-            print("Estado actual:", matriz4[3][i])
-            
-            while True:
+
+    try:
+        original = open("pedidos.txt", "rt")
+        temporal = open("pedidostemp.txt", "wt")
+
+        for linea in original:
+            if not linea.strip():
+                continue  # salta líneas vacías
+
+            partes = linea.strip().split(";")
+            codigo = partes[1]  # el código está en la posición 1
+            estado_actual = partes[5]
+
+            if codigo == codigo_objetivo:
+                encontrado = True
+                print(f"Estado actual: {estado_actual}")
                 print("\nOpciones de nuevo estado:")
                 print("1️⃣ - Pendiente")
                 print("2️⃣ - Despachado")
                 print("3️⃣ - En camino")
                 print("4️⃣ - Entregado")
                 print("5️⃣ - Cancelar pedido")
-                print("0️⃣ - Volver al menu")
-                print()
-                
-                
-                opcion = input("Seleccione una opción: ") #Pide al usuario que ingrese una de las opciones anteriores
-                opcion = validar_opciones(opcion,0,5) #Valida que la entrada este entre 0 y 5
+                print("0️⃣ - Volver al menú")
+
+                opcion = input("Seleccione una opción: ")
+                opcion = validar_opciones(opcion, 0, 5)
+
                 if opcion == 0:
-                    print("Volviendo al menu principal...")
-                    break
-                estados_a_modificar = ("Pendiente","Despachado","En camino","Entregado","Cancelar pedido")
-                estados_a_modificar = estados_a_modificar[opcion - 1]
-
-                seguridad = input(f"Usted seleccionó la opción {estados_a_modificar} y el codigo {codigo3}. ¿Desea confirmar esta opción? [Si/No]: ").lower()
-
-                if seguridad == "si":
-                    #Se le asigna el nuevo estado al pedido solicitado, si es 0 se sale de la operacion y el pedido queda con el estado original14
-                    
-                    if opcion == 0:
-                        print("Operación cancelada.")
-
-                    elif "Devuelto" in matriz4[3][i]:  
-                        print("No se puede cambiar el estado de un pedido que ya ha sido devuelto")
-
-                    elif opcion == 1:
-                        matriz4[3][i] = "Pendiente"
-                    elif opcion == 2:
-                        matriz4[3][i] = "Despachado"
-                    elif opcion == 3:
-                        matriz4[3][i] = "En camino"
-                    elif opcion == 4:
-                        matriz4[3][i] = "Entregado"
-                    elif opcion == 5:
-                        if matriz4[3][i] == "Entregado":
-                            print("No se puede marcar como cancelado el pedido ya que ha sido entregado")
-                        else:
-                            matriz4[3][i] = "Cancelado"
-
-                    if opcion != 0 and "Devuelto" not in matriz4[3][i]:  # Solo mostrar si no se canceló o no fue devuelto
-                        print(f"Pedido marcado como {matriz4[3][i]}.")
-                        print("✅ Pedido actualizado: ")
-                        for fila in matriz4[ :-1]:
-                            print(fila[i], end=" | ")
-                        print("/".join(map(str, matriz4[4][i][ :3])), end=" ")
-                        print(":".join(f"{x:02d}" for x in matriz4[4][i][3: ]))
-                        print()
-                        break
-                elif seguridad == "no":
-                    print("Acción cancelada por decisión del usuario, volviendo al menú interno...")
+                    print("Volviendo al menú principal...")
+                    temporal.write(linea)
                     continue
-                else:
-                    while seguridad != "no" and seguridad != "si":
-                        print("Opción incorrecta, seleccione Si o No")
-                        seguridad = input(f"Usted seleccionó la opción {estados_a_modificar}. ¿Desea confirmar esta opción? [Si/No]: ").lower()
-                    break
-            break
 
-    if not encontrado:
-        print("No se encontró un pedido con ese código. ❌")
+                estados_a_modificar = ("Pendiente", "Despachado", "En camino", "Entregado", "Cancelar pedido")
+                nuevo_estado = estados_a_modificar[opcion - 1]
 
+                seguridad = input(f"Usted seleccionó '{nuevo_estado}' para el pedido {codigo}. ¿Desea confirmar? [Si/No]: ").lower()
+                if seguridad != "si":
+                    print("Acción cancelada. No se realizaron cambios.")
+                    temporal.write(linea)
+                    continue
+
+                # Reglas de validación
+                if "Devuelto" in estado_actual:
+                    print("❌ No se puede cambiar el estado de un pedido que ya fue devuelto.")
+                    temporal.write(linea)
+                    continue
+
+                if estado_actual == "Entregado" and nuevo_estado == "Cancelar pedido":
+                    print("❌ No se puede cancelar un pedido que ya fue entregado.")
+                    temporal.write(linea)
+                    continue
+
+                # Actualización del estado
+                if nuevo_estado == "Cancelar pedido":
+                    nuevo_estado = "Cancelado"
+
+                partes[5] = nuevo_estado
+                linea_modificada = ";".join(partes)
+                temporal.write(linea_modificada + "\n")
+
+                print(f"✅ Pedido {codigo} actualizado a estado: {nuevo_estado}")
+            else:
+                temporal.write(linea)
+
+        original.close()
+        temporal.close()
+
+        if encontrado:
+            os.replace("pedidostemp.txt", "pedidos.txt")
+        else:
+            os.remove("pedidostemp.txt")
+            print("❌ No se encontró un pedido con ese código.")
+
+    except FileNotFoundError:
+        print("⚠️ No se encontró el archivo 'pedidos.txt'.")
+    except OSError as e:
+        print(f"Error al acceder al archivo: {e}")
+    finally:
+        try:
+            original.close()
+            temporal.close()
+        except NameError:
+            pass
 
 def devoluciones(): 
     """
@@ -559,57 +618,72 @@ def devoluciones():
 
 #PROGRAMA PRINCIPAL#
 
-try:
-    archivo = open("pedidos.txt", "rt")
-    ultima_linea = ""
-    
-    for linea in archivo:
-        linea_limpia = linea.strip()
-        if linea_limpia != "":
-            ultima_linea = linea_limpia
-    
-    if ultima_linea == "":  # Archivo vacío
-        n = 0 #se incializa el contador de envios (para tracking) en 0 ya que no existen pedidos#
-    else:
-        campos = ultima_linea.split(";")
-        n = int(campos[0]) #se incializa el contador de envios desde el ultimo envio encontrado en el archivo#
-
-except FileNotFoundError:
-    print("⚠️ No se encontró 'pedidos.txt'.")
-    n = 0
-
-except OSError as mensaje:
-    print("No se puede leer el archivo:", mensaje)
-    n = 0
-    
-else:
+while True:
     try:
-        archivo.close()
-    except OSError:
-        pass
-    while True:
-        print("\n📦 --- Sistema de Envíos ---")
-        print("\n1️⃣  Crear envío")
-        print("2️⃣  Consultar envío")
-        print("3️⃣  Listar los envíos")
-        print("4️⃣  Cambiar estado de un envío")
-        print("5️⃣  Realizar devolución del cliente")
-        print("0️⃣  Salir")
-        opcion = input("\nEscoja una opcion: ")
-        print()
-        opcion = validar_opciones(opcion, 0, 5)
-        match opcion:
-            case 0:
-                print("Nos vemos! 👋 ")
-                break
-            case 1:
-                n = int(agregar_envio(n))  
-            case 2:
-                consultar_envio()
-            case 3:
-                historial_envios()
-            case 4:
-                cambiar_estado()
-            case 5:
-                devoluciones()
-    
+        archivo = open("pedidos.txt", "rt")
+        ultima_linea = ""
+        
+        for linea in archivo:
+            linea_limpia = linea.strip()
+            if linea_limpia != "":
+                ultima_linea = linea_limpia
+        
+        if ultima_linea == "":  # Archivo vacío
+            n = 0 #se incializa el contador de envios (para tracking) en 0 ya que no existen pedidos#
+        else:
+            campos = ultima_linea.split(";")
+        n = int(campos[0]) #se incializa el contador de envios desde el ultimo envio encontrado en el archivo#
+        break
+    except FileNotFoundError:
+        try:
+            archivo = open("pedidos.txt", "wt")
+            print()
+            print("-"*100)
+            print("Archivo creado como pedidos.txt")
+            print("-"*100)
+        except OSError as mensaje:
+            print("No se puede leer el archivo:", mensaje)
+        else:
+            try:
+                archivo.close()
+                n = 0
+            except OSError:
+                pass
+            continue
+    except OSError as mensaje:
+        print("No se puede leer el archivo:", mensaje)
+        n = 0
+    finally:
+        try:
+            archivo.close()
+        except OSError:
+            pass
+
+        while True:
+            print("\n📦 --- Sistema de Envíos ---")
+            print("\n1️⃣  Crear envío")
+            print("2️⃣  Consultar envío")
+            print("3️⃣  Listar los envíos")
+            print("4️⃣  Cambiar estado de un envío")
+            print("5️⃣  Realizar devolución del cliente")
+            print("0️⃣  Salir")
+            
+            opcion = input("\nEscoja una opcion: ")
+            print()
+            
+            opcion = validar_opciones(opcion, 0, 5)
+            
+            match opcion:
+                case 0:
+                    print("Nos vemos! 👋 ")
+                    break
+                case 1:
+                    n = int(agregar_envio(n))  
+                case 2:
+                    consultar_envio()
+                case 3:
+                    historial_envios()
+                case 4:
+                    cambiar_estado()
+                case 5:
+                    devoluciones()
