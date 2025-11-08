@@ -70,7 +70,6 @@ def validar_horario(msj="Ingrese la consulta: "):
         except ValueError:
             print("ingreso invalido, debe ser una fecha del estilo (DD/MM/AAAA hh:mm), o (DD-MM-AAAA hh:mm)")
             print("Intente nuevamente")
-            print()
     return lista_numeros
 
 def formato_fechas():
@@ -186,7 +185,7 @@ def consultar_envio():
     """
     tipo_de_consulta = ("Volver al menu", "Por codigo", "Por cliente", "Por fecha")
     
-    tipo_elegido = input(f"\n🔎​  --- Consultar envío ---\n0️⃣  Volver al menú anterior\n1️⃣  Por codigo\n2️⃣  Por cliente\n3️⃣  ​Por fecha\n\nIngrese un numero para el tipo de consulta: ")
+    tipo_elegido = input(f"\n🔎​  --- Consultar envío ---\n0️⃣  Volver al menú anterior\n1️⃣  Por codigo\n2️⃣  Por cliente\n3️⃣  ​Por fecha\n\nescoja una opcion: ")
     tipo_elegido = validar_opciones(tipo_elegido, 0, 3)
     tipo_elegido = tipo_de_consulta[tipo_elegido]
     
@@ -208,7 +207,7 @@ def consultar_envio():
                         encontrado = True
                         print("✅ Pedido encontrado:")
                         print("-"*100)
-                        print(f"{linea[1]:^10} | {linea[2]:^15} | {linea[3]:^15} | {linea[4]:^15} | {linea[5]:^15} | {linea[6]:^15}")
+                        print(f"{linea[1]:^10} | {linea[2]:^15} | {linea[3]:^15} | {linea[4]:^15} | {linea[5]:^{15 if linea[5][ :9] == "devuelto" else 10}} | {linea[6]:^15}")
                         print("-"*100)
                         break
                 else:
@@ -231,7 +230,7 @@ def consultar_envio():
                         encontrado = True
                         print("✅ Pedido encontrado:")
                         print("-"*100)
-                        print(f"{linea[1]:^10} | {linea[2]:^15} | {linea[3]:^15} | {linea[4]:^15} | {linea[5]:^15} | {linea[6]:^15}")
+                        print(f"{linea[1]:^10} | {linea[2]:^15} | {linea[3]:^15} | {linea[4]:^15} | {linea[5]:^{20 if linea[5][ :9] == "devuelto" else 10}} | {linea[6]:^15}")
                 else:
                     print("\nActualmente no hay pedidos cargados")
                     print("-"*100)
@@ -243,7 +242,6 @@ def consultar_envio():
             consultar_envio()
         elif tipo_elegido == "Por fecha": 
             cadena_fecha = validar_horario(msj="\nIngrese la fecha a consultar (formato: DD/MM/AAAA hh:mm o DD-MM-AAAA hh:mm): ")
-            print()
             
             encontrado = False
             for linea in arch:
@@ -253,7 +251,7 @@ def consultar_envio():
                         print("✅ Pedido encontrado:")
                         print("-"*100)
                         encontrado = True
-                        print(f"{linea[1]:^10} | {linea[2]:^15} | {linea[3]:^15} | {linea[4]:^15} | {linea[5]:^15} | {linea[6]:^15}")
+                        print(f"{linea[1]:^10} | {linea[2]:^15} | {linea[3]:^15} | {linea[4]:^15} | {linea[5]:^{15 if linea[5][ :9] == "devuelto" else 10}} | {linea[6]:^15}")
                 else:
                     print("\nActualmente no hay pedidos cargados")
                     print("-"*100)
@@ -284,7 +282,7 @@ def historial_envios():
     """
     
     print("\n📦 --- Listar envios ---\n0️⃣  Volver al menu\n1️⃣  Listar todos\n2️⃣  Listar por fecha\n3️⃣  Listar por estado de envio\n4️⃣​  Listar por provincias\n5️⃣  Mostrar estadisticas")
-    opcion = input("\nEscoja una opcion:")
+    opcion = input("\nEscoja una opcion: ")
     opcion = validar_opciones(opcion,1,5)
     
     try:
@@ -303,7 +301,7 @@ def historial_envios():
                 for linea in arch:
                     if linea.strip() != "":
                         campos = separar_campos(linea)
-                        print(f"{campos[1]:^10} | {campos[2]:^15} | {campos[3]:^15} | {campos[4]:^15} | {campos[5]:^10} | {campos[6]:^10}")
+                        print(f"{campos[1]:^10} | {campos[2]:^15} | {campos[3]:^15} | {campos[4]:^15} | {campos[5]:^15} | {campos[6]:^10}")
                         total += 1
                         ultima_linea1 = linea
 
@@ -343,19 +341,20 @@ def historial_envios():
                 
                 else:  
                     valor = input("Ingrese la hora (0hs-23hs): ")
+                    valor = valor.replace("hs","")
                     valor = validar_opciones(valor,0,23)
                     rango1, rango2 = 11,13 #rebanada donde se encuentra la hora#
                 
+                print("-"*100)
                 for linea in arch:
                     if linea.strip() != "":
                         campos = separar_campos(linea)
                         if campos[6][rango1:rango2] == f"{valor:02d}":
-                            print("-"*100)
-                            print(f"{campos[1]:^10} | {campos[2]:^15} | {campos[3]:^15} | {campos[4]:^12} | {campos[5]:^10} | {campos[6]:^10}")
+                            print(f"{campos[1]:^10} | {campos[2]:^15} | {campos[3]:^15} | {campos[4]:^15} | {campos[5]:^{15 if campos[5][ :9] == "devuelto" else 10}} | {campos[6]:^15}")
                             encontrado = True
                             
                 if not encontrado:
-                    print(f"\nNo hay pedidos para el {seleccion} seleccionado.")
+                    print(f"No hay pedidos para el {seleccion} seleccionado.")
                 print("-" * 100)
 
             case 3:#LISTAR POR ESTADO# 
@@ -376,11 +375,11 @@ def historial_envios():
                         campos = separar_campos(linea)
                         if seleccion == "Devuelto":
                             if "Devuelto" in campos[5]:  # captura Devuelto aunque tenga motivo
-                                print(f"{campos[1]:^10} | {campos[2]:^15} | {campos[3]:^15} | {campos[4]:^12} | {campos[5]:^10} | {campos[6]:^10}")
+                                print(f"{campos[1]:^10} | {campos[2]:^15} | {campos[3]:^15} | {campos[4]:^15} | {campos[5]:^10} | {campos[6]:^15}")
                                 encontrado = True
 
                         elif campos[5] == seleccion:
-                            print(f"{campos[1]:^10} | {campos[2]:^15} | {campos[3]:^15} | {campos[4]:^12} | {campos[5]:^10} | {campos[6]:^10}")
+                            print(f"{campos[1]:^10} | {campos[2]:^15} | {campos[3]:^15} | {campos[4]:^15} | {campos[5]:^10} | {campos[6]:^15}")
                             encontrado = True
 
                 if not encontrado:
@@ -390,9 +389,11 @@ def historial_envios():
             #listar por provincia#
             case 4:
                 seleccion = input("Ingrese el nombre de la provincia que desea listar: ").title()
+                seleccion = sacar_acentos(seleccion)
 
                 while seleccion not in provincias:
                     seleccion = input("Ingreso invalido, reintente\nIngrese el nombre de la provincia que desea listar: ").title()
+                    seleccion = sacar_acentos(seleccion)
                 
                 encontrado = False
                 
@@ -404,7 +405,7 @@ def historial_envios():
                         campos = separar_campos(linea)
                         if campos[4] == seleccion:
                             print("-"*100)
-                            print(f"{campos[1]:^10} | {campos[2]:^15} | {campos[3]:^15} | {campos[4]:^12} | {campos[5]:^10} | {campos[6]:^10}")
+                            print(f"{linea[1]:^10} | {linea[2]:^15} | {linea[3]:^15} | {linea[4]:^15} | {linea[5]:^{15 if linea[5][ :9] == "devuelto" else 10}} | {linea[6]:^15}")
                             encontrado = True
                 
                 print("-"*100)
@@ -470,10 +471,10 @@ def cambiar_estado():
     Permite modificar el estado de un envío existente.
     Valida que no se pueda cancelar un pedido ya entregado.
     """
-    codigo_objetivo = input("🔄 --- Cambiar estado ---\nIngrese el código de envío a modificar: ").upper()
+    codigo_objetivo = input("\n🔄 --- Cambiar estado ---\nIngrese el código de tracking que desee modificar: ").upper()
     while codigo_objetivo[ :3] != "ENV" or not codigo_objetivo[3: ].isdigit() or len(codigo_objetivo[3: ]) < 3:
         print("Ingreso incorrecto (debe tener al menos 3 digitos), intente nuevamente")
-        codigo_objetivo = (input("Ingrese el codigo de tracking que desee consultar: ")).upper()
+        codigo_objetivo = (input("\nIngrese el codigo de tracking que desee modificar: ")).upper()
     encontrado = False
 
     try:
@@ -490,7 +491,9 @@ def cambiar_estado():
 
             if codigo == codigo_objetivo:
                 encontrado = True
+                print("-"*100)
                 print(f"Estado actual: {estado_actual}")
+                
                 print("\nOpciones de nuevo estado:")
                 print("1️⃣ - Pendiente")
                 print("2️⃣ - Despachado")
@@ -499,7 +502,7 @@ def cambiar_estado():
                 print("5️⃣ - Cancelar pedido")
                 print("0️⃣ - Volver al menú")
 
-                opcion = input("Seleccione una opción: ")
+                opcion = input("\nEscoja una opción: ")
                 opcion = validar_opciones(opcion, 0, 5)
 
                 if opcion == 0:
@@ -510,10 +513,11 @@ def cambiar_estado():
                 estados_a_modificar = ("Pendiente", "Despachado", "En camino", "Entregado", "Cancelar pedido")
                 nuevo_estado = estados_a_modificar[opcion - 1]
 
-                seguridad = input(f"Usted seleccionó '{nuevo_estado}' para el pedido {codigo}. ¿Desea confirmar? [Si/No]: ").lower()
+                seguridad = input(f"\nUsted seleccionó '{nuevo_estado}' para el pedido {codigo}. ¿Desea confirmar? [Si/No]: ").lower()
+                print("-"*100)
                 if seguridad != "si":
                     print("Acción cancelada. No se realizaron cambios.")
-                    temporal.write(linea)
+                    temporal.write(linea) ## estaria bueno que te mande al menu de cambiar estado
                     continue
 
                 # Reglas de validación
@@ -539,7 +543,7 @@ def cambiar_estado():
             else:
                 temporal.write(linea)
 
-        original.close()
+        original.close() ###No esta cerrandose ya abajo##
         temporal.close()
 
         if encontrado:
@@ -554,7 +558,7 @@ def cambiar_estado():
         print(f"Error al acceder al archivo: {e}")
     finally:
         try:
-            original.close()
+            original.close() ## esto cierra el archivo
             temporal.close()
         except NameError:
             pass
@@ -601,7 +605,7 @@ def devoluciones():
             print("Pedido no encontrado ")
     
 
-        os.rename("pedidostemp.txt", "pedidos.txt") 
+        os.rename("pedidostemp.txt", "pedidos.txt") ## primero hay que cerrarlos creo
 
     except FileNotFoundError as mensaje:
         print("No se pudo encontrar el archivo", mensaje)
@@ -615,6 +619,7 @@ def devoluciones():
             print("No se pudo cerrar el archivo", mensaje)
         except NameError:
             print("No se pudo cerrar el archivo ya que no existe", mensaje)
+    ## renombrar aca abajo y eliminar el temporal
 
 #PROGRAMA PRINCIPAL#
 
