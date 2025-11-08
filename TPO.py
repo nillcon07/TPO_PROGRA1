@@ -570,7 +570,7 @@ def devoluciones():
     solicita el motivo de la devolución y actualiza el estado.
     Solo permite devoluciones de pedidos entregados.    
     """
-    codigo_devolucion = input("Ingrese el codigo del pedido a devolver: ").upper()
+    codigo_devolucion = input("\n↩️  --- Devoluciones ---\nIngrese el codigo del pedido a devolver: ").upper()
     
     encontrado = False  
     try:
@@ -599,13 +599,13 @@ def devoluciones():
                 salida.write(";".join(campos) + "\n")
             
             else:
-                salida.write(linea + "\n")
+                salida.write(linea)
                 
         if encontrado == False:
             print("Pedido no encontrado ")
     
 
-        os.rename("pedidostemp.txt", "pedidos.txt") ## primero hay que cerrarlos creo
+         ## primero hay que cerrarlos creo
 
     except FileNotFoundError as mensaje:
         print("No se pudo encontrar el archivo", mensaje)
@@ -619,6 +619,8 @@ def devoluciones():
             print("No se pudo cerrar el archivo", mensaje)
         except NameError:
             print("No se pudo cerrar el archivo ya que no existe", mensaje)
+
+    os.replace("pedidostemp.txt", "pedidos.txt")
     ## renombrar aca abajo y eliminar el temporal
 
 #PROGRAMA PRINCIPAL#
