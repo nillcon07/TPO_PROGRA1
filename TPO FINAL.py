@@ -201,12 +201,12 @@ def consultar_envio():
             encontrado = False
             for linea in arch:
                 if linea.strip() != "":
-                    linea = separar_campos(linea)
-                    if linea[1] == consulta:
+                    campos = separar_campos(linea)
+                    if campos[1] == consulta:
                         encontrado = True
                         print("✅ Pedido encontrado:")
                         print("-"*100)
-                        print(f"{linea[1]:^10} | {linea[2]:^15} | {linea[3]:^15} | {linea[4]:^15} | {linea[5]:^{15 if linea[5][ :9] == "devuelto" else 10}} | {linea[6]:^15}")
+                        print(f"{campos[1]:^10} | {campos[2]:^15} | {campos[3]:^15} | {campos[4]:^15} | {campos[5]:^{15 if campos[5][ :9] == "devuelto" else 10}} | {campos[6]:^15}")
                         print("-"*100)
                         break
                 else:
@@ -224,12 +224,12 @@ def consultar_envio():
             encontrado = False
             for linea in arch:
                 if linea.strip() != "":
-                    linea = separar_campos(linea)
-                    if linea[2] == consulta:
+                    campos = separar_campos(linea)
+                    if campos[2] == consulta:
                         encontrado = True
                         print("✅ Pedido encontrado:")
                         print("-"*100)
-                        print(f"{linea[1]:^10} | {linea[2]:^15} | {linea[3]:^15} | {linea[4]:^15} | {linea[5]:^{20 if linea[5][ :9] == "devuelto" else 10}} | {linea[6]:^15}")
+                        print(f"{campos[1]:^10} | {campos[2]:^15} | {campos[3]:^15} | {campos[4]:^15} | {campos[5]:^{20 if campos[5][ :9] == "devuelto" else 10}} | {campos[6]:^15}")
                 else:
                     print("\nActualmente no hay pedidos cargados")
                     print("-"*100)
@@ -245,12 +245,12 @@ def consultar_envio():
             encontrado = False
             for linea in arch:
                 if linea.strip() != "":
-                    linea = separar_campos(linea)
-                    if linea[6] == cadena_fecha:
+                    campos = separar_campos(linea)
+                    if campos[6] == cadena_fecha:
                         print("✅ Pedido encontrado:")
                         print("-"*100)
                         encontrado = True
-                        print(f"{linea[1]:^10} | {linea[2]:^15} | {linea[3]:^15} | {linea[4]:^15} | {linea[5]:^{15 if linea[5][ :9] == "devuelto" else 10}} | {linea[6]:^15}")
+                        print(f"{campos[1]:^10} | {campos[2]:^15} | {campos[3]:^15} | {campos[4]:^15} | {campos[5]:^{15 if campos[5][ :9] == "devuelto" else 10}} | {campos[6]:^15}")
                 else:
                     print("\nActualmente no hay pedidos cargados")
                     print("-"*100)
@@ -656,7 +656,7 @@ while True:
             n = 0 #se incializa el contador de envios (para tracking) en 0 ya que no existen pedidos#
         else:
             campos = ultima_linea.split(";")
-        n = int(campos[0]) #se incializa el contador de envios desde el ultimo envio encontrado en el archivo#
+            n = int(campos[0]) #se incializa el contador de envios desde el ultimo envio encontrado en el archivo#
         break
     except FileNotFoundError:
         try:
