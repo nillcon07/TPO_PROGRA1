@@ -484,10 +484,10 @@ def cambiar_estado():
         temporal = open("pedidostemp.txt", "wt")
 
         for linea in original:
-            if not linea.strip():
+            if linea.strip() == "":
                 continue  # salta líneas vacías
 
-            partes = linea.strip().split(";")
+            partes = separar_campos(linea)
             codigo = partes[1]  # el código está en la posición 1
             estado_actual = partes[5]
 
@@ -547,12 +547,20 @@ def cambiar_estado():
 
         original.close() ###No esta cerrandose ya abajo##
         temporal.close()
-
+            
         if encontrado:
-            os.replace("pedidostemp.txt", "pedidos.txt")
+            try:
+                os.replace("pedidostemp.txt", "pedidos.txt")
+                print("\n✅ Estado del pedido actualizado correctamente.")
+                print("El archivo de pedidos ha sido modificado con exito.")
+            except OSError as e:
+                print(f"\n⚠️ Error al reemplazar el archivo principal: {e}")
         else:
-            os.remove("pedidostemp.txt")
-            print("❌ No se encontró un pedido con ese código.")
+            try:
+                os.remove("pedidostemp.txt")
+                print("\nℹ️ No se encontro el código ingresado. No se realizaron cambios.")
+            except FileNotFoundError:
+                print("\n⚠️ No se encontro el archivo temporal.")
 
         ingreso = input("\n¿Desea continuar cambiando estados de envios? Si / No: ").lower()
         while ingreso != "si" and ingreso != "no":
@@ -626,8 +634,20 @@ def devoluciones():
         except NameError:
             print("No se pudo cerrar el archivo ya que no existe", mensaje)
 
-    os.replace("pedidostemp.txt", "pedidos.txt")
-    ## renombrar aca abajo y eliminar el temporal
+    if encontrado:
+        try:
+            os.replace("pedidostemp.txt", "pedidos.txt")
+            print("\n✅ Devolucion registrada correctamente.")
+            print("El archivo de pedidos ha sido actualizado.")
+        except OSError as e:
+            print(f"\n⚠️ Error al reemplazar el archivo principal: {e}")
+    else:
+        try:
+            os.remove("pedidostemp.txt")
+            print("\nℹ️ No se encontro el código ingresado. No se realizaron cambios.")
+        except FileNotFoundError:
+            print("\n⚠️ No se encontro el archivo temporal.")
+
 
     ingreso = input("\n¿Desea continuar en la opcion de devoluciones? Si / No: ").lower()
     while ingreso != "si" and ingreso != "no":
@@ -637,75 +657,75 @@ def devoluciones():
     else:
         devoluciones()
     
-
 #PROGRAMA PRINCIPAL#
+try:
+    archivo = open("pedidos.txt", "rt")
+    ultima_linea = ""
+    
+    for linea in archivo:
+        linea_limpia = linea.strip()
+        if linea_limpia != "":
+            ultima_linea = linea_limpia
+    
+    if ultima_linea == "":  # Archivo vacío
+        n = 0 #se incializa el contador de envios (para tracking) en 0 ya que no existen pedidos#
+    else:
+        campos = ultima_linea.split(";")
+        n = int(campos[0]) #se incializa el contador de envios desde el ultimo envio encontrado en el archivo#
 
-while True:
+except FileNotFoundError:
     try:
-        archivo = open("pedidos.txt", "rt")
-        ultima_linea = ""
-        
-        for linea in archivo:
-            linea_limpia = linea.strip()
-            if linea_limpia != "":
-                ultima_linea = linea_limpia
-        
-        if ultima_linea == "":  # Archivo vacío
-            n = 0 #se incializa el contador de envios (para tracking) en 0 ya que no existen pedidos#
-        else:
-            campos = ultima_linea.split(";")
-            n = int(campos[0]) #se incializa el contador de envios desde el ultimo envio encontrado en el archivo#
-        break
-    except FileNotFoundError:
-        try:
-            archivo = open("pedidos.txt", "wt")
-            print()
-            print("-"*100)
-            print("Archivo creado como pedidos.txt")
-            print("-"*100)
-        except OSError as mensaje:
-            print("No se puede leer el archivo:", mensaje)
-        else:
-            try:
-                archivo.close()
-                n = 0
-            except OSError:
-                pass
-            continue
+        archivo = open("pedidos.txt", "wt")
+        print()
+        print("-"*100)
+        print("Archivo creado como pedidos.txt")
+        print("-"*100)
     except OSError as mensaje:
         print("No se puede leer el archivo:", mensaje)
-        n = 0
-    finally:
+    else:
         try:
             archivo.close()
+            n = 0
         except OSError:
-            pass
+            print("Eror al cerrar el archivo")
 
-        while True:
-            print("\n📦 --- Sistema de Envíos ---")
-            print("\n1️⃣  Crear envío")
-            print("2️⃣  Consultar envío")
-            print("3️⃣  Listar los envíos")
-            print("4️⃣  Cambiar estado de un envío")
-            print("5️⃣  Realizar devolución del cliente")
-            print("0️⃣  Salir")
-            
-            opcion = input("\nEscoja una opcion: ")
-            print()
-            
-            opcion = validar_opciones(opcion, 0, 5)
-            
-            match opcion:
-                case 0:
-                    print("Nos vemos! 👋 ")
-                    break
-                case 1:
-                    n = int(agregar_envio(n))  
-                case 2:
-                    consultar_envio()
-                case 3:
-                    historial_envios()
-                case 4:
-                    cambiar_estado()
-                case 5:
-                    devoluciones()
+
+except OSError as mensaje:
+    print("No se puede leer el archivo:", mensaje)
+    n = 0
+finally:
+    try:
+        archivo.close()
+    except OSError:
+        print("Eror al cerrar el archivo")
+    except NameError:
+        print('Archivo inexistente')
+
+while True:
+    print("\n📦 --- Sistema de Envíos ---")
+    print("\n1️⃣  Crear envío")
+    print("2️⃣  Consultar envío")
+    print("3️⃣  Listar los envíos")
+    print("4️⃣  Cambiar estado de un envío")
+    print("5️⃣  Realizar devolución del cliente")
+    print("0️⃣  Salir")
+    
+    opcion = input("\nEscoja una opcion: ")
+    print()
+    
+    opcion = validar_opciones(opcion, 0, 5)
+    
+    match opcion:
+        case 0:
+            print("Nos vemos! 👋 ")
+            break
+        case 1:
+            n = int(agregar_envio(n))  
+        case 2:
+            consultar_envio()
+        case 3:
+            historial_envios()
+        case 4:
+            cambiar_estado()
+        case 5:
+            devoluciones()
