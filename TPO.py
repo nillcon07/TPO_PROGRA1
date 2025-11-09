@@ -281,7 +281,7 @@ def historial_envios():
     Si hay envíos, los lista todos mostrando código, cliente, dirección y estado.    
     """
     
-    print("\n📦 --- Listar envios ---\n0️⃣  Volver al menu\n1️⃣  Listar todos\n2️⃣  Listar por fecha\n3️⃣  Listar por estado de envio\n4️⃣​  Listar por provincias\n5️⃣  Mostrar estadisticas")
+    print("\n📦 --- Listar envios ---\n1️⃣  Listar todos\n2️⃣  Listar por fecha\n3️⃣  Listar por estado de envio\n4️⃣​  Listar por provincias\n5️⃣  Mostrar estadisticas")
     opcion = input("\nEscoja una opcion: ")
     opcion = validar_opciones(opcion,1,5)
     
@@ -383,7 +383,7 @@ def historial_envios():
                             encontrado = True
 
                 if not encontrado:
-                    print(f"\nNo hay pedidos con estado {seleccion}.")
+                    print(f"No hay pedidos con estado {seleccion}.")
                 print("-"*100)
                 
             #listar por provincia#
@@ -407,11 +407,10 @@ def historial_envios():
                             print("-"*100)
                             print(f"{linea[1]:^10} | {linea[2]:^15} | {linea[3]:^15} | {linea[4]:^15} | {linea[5]:^{15 if linea[5][ :9] == "devuelto" else 10}} | {linea[6]:^15}")
                             encontrado = True
-                
-                print("-"*100)
-                
                 if not encontrado:
                     print(f"No hay pedidos de la provincia {seleccion}")
+                
+                print("-"*100)
 
             case 5:
                 conteo_provincias = {provincia: 0 for provincia in provincias}
@@ -443,7 +442,7 @@ def historial_envios():
                         cantidad1 = conteo_estados[estado1]
                         porcentaje1 = (cantidad1 / total) * 100
                         print(f"{estado1:<12} | {cantidad1:>3} pedidos | Porcentaje: {porcentaje1:5.1f}%")
-                    print("-" * 100)
+                    
                     print(f"Total de Pedidos: {total}")
                 else:
                     print("No se encuentran pedidos en el sistema para poder realizar estadisticas")
