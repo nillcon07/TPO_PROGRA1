@@ -211,10 +211,6 @@ def consultar_envio():
                         print("-"*100)
                         break
                     ultima_linea = linea
-            if ultima_linea == "":
-                print("\nActualmente no hay pedidos cargados")
-                print("-"*100)
-                encontrado = True
                 
             if encontrado == False:
                 print("-"*100)
@@ -323,8 +319,6 @@ def historial_envios():
                         total += 1
                         ultima_linea1 = linea
 
-                if ultima_linea1 == "":
-                    print("Actualmente no existen pedidos en el sistema")
                 print("-" * 100)
                 print(f"Total de Pedidos: {total}")
                 print()
@@ -712,7 +706,31 @@ while True:
     print()
     
     opcion = validar_opciones(opcion, 0, 5)
-    
+
+    if opcion == 2 or opcion == 3 or opcion == 4 or opcion == 5:
+        try:
+            archivo = open("pedidos.txt", "rt")
+            vacio = True
+            for linea in archivo:
+                if linea.strip() != "":
+                    vacio = False
+                    break
+            if vacio:
+                print("\n⚠️  No hay ningun pedido en el archivo para usar esta funcion, cree uno primero.\n")
+                archivo.close()
+                continue
+        except FileNotFoundError as mensaje:
+            print("\nNo se pudo abrir el archivo:", mensaje)
+            continue
+        except OSError as mensaje:
+            print("\nNo se pudo abrir el archivo:", mensaje)
+            continue
+        finally:
+            try:
+                archivo.close()
+            except NameError:
+                pass
+
     match opcion:
         case 0:
             print("Nos vemos! 👋 ")
