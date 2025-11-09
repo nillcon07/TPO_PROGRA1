@@ -610,17 +610,6 @@ def devoluciones():
             
             else:
                 salida.write(linea)
-                
-        if encontrado == False:
-            print("Pedido no encontrado ")
-    
-        ingreso = input("\n¿Desea continuar en la opcion de devoluciones? Si / No: ").lower()
-        while ingreso != "si" and ingreso != "no":
-            ingreso = input("Ingreso invalido, ¿Desea continuar en la opcion de devoluciones? Si / No: ").lower()
-        if ingreso == "no":
-            pass
-        else:
-            devoluciones()
 
          ## primero hay que cerrarlos creo
 
@@ -639,6 +628,15 @@ def devoluciones():
 
     os.replace("pedidostemp.txt", "pedidos.txt")
     ## renombrar aca abajo y eliminar el temporal
+
+    ingreso = input("\n¿Desea continuar en la opcion de devoluciones? Si / No: ").lower()
+    while ingreso != "si" and ingreso != "no":
+        ingreso = input("Ingreso invalido, ¿Desea continuar en la opcion de devoluciones? Si / No: ").lower()
+    if ingreso == "no":
+        pass
+    else:
+        devoluciones()
+    
 
 #PROGRAMA PRINCIPAL#
 
