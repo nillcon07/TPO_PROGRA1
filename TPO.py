@@ -100,6 +100,7 @@ def guardar_archivo_append(registro):
             pass 
 
 def separar_campos(linea):
+    """Separa los campos de una línea del archivo pedidos.txt"""
     linea = linea.strip() 
     campos = linea.split(";")
     return campos
@@ -596,17 +597,17 @@ def devoluciones():
     codigo_devolucion = input("\n↩️  --- Devoluciones ---\nIngrese el codigo del pedido a devolver: ").upper()
 
     encontrado = False  
-    try:
+    try:#apertura de archivos#
         archivo = open("pedidos.txt", "rt")
         salida = open("pedidostemp.txt","wt")  
         
-        for linea in archivo:
+        for linea in archivo: #lectura linea por linea#
             if linea.strip() == "":
                 continue
         
-            campos = separar_campos(linea)
+            campos = separar_campos(linea) 
 
-            if campos[1].upper() == codigo_devolucion:
+            if campos[1].upper() == codigo_devolucion: #comparacion del codigo ingresado con el del archivo#
                 encontrado = True
                 if "Devuelto" in campos[5]:
                     print("\nEste pedido ya ha sido devuelto anteriormente")
@@ -619,12 +620,12 @@ def devoluciones():
                 else:
                     print("\nEl envio todavia no ha sido entregado por lo que no se puede realizar la devolucion")
                 
-                salida.write(";".join(campos) + "\n")
+                salida.write(";".join(campos) + "\n") #escritura en el archivo temporal#
             
             else:
                 salida.write(linea)
 
-    except FileNotFoundError as mensaje:
+    except FileNotFoundError as mensaje: #excepciones#
         print("No se pudo encontrar el archivo", mensaje)
     except OSError as mensaje:
         print("No se pudo abrir el archivo", mensaje)
@@ -637,7 +638,7 @@ def devoluciones():
         except NameError as mensaje:
             print("No se pudo cerrar el archivo ya que no existe", mensaje)
 
-    if encontrado:
+    if encontrado: #reemplazo del archivo original por el temporal#
         os.replace("pedidostemp.txt", "pedidos.txt")
     else:
         os.remove("pedidostemp.txt")
@@ -648,10 +649,10 @@ def devoluciones():
         try:
             devoluciones()
         except RecursionError as e:
-            print(f"Maximo de operaciones alcanzadas en Devoluciones {e}")
+            print(f"Maximo de operaciones alcanzadas en Devoluciones {e}") #manejo de error en caso de muchas devoluciones#
 #PROGRAMA PRINCIPAL
 
-#nicializacion del contador de envíos "n"
+#inicializacion del contador de envíos "n"
 while True:
     try:
         archivo = open("pedidos.txt", "rt")
@@ -754,3 +755,4 @@ while True:
             cambiar_estado()
         case 5:
             devoluciones()
+
