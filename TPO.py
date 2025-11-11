@@ -60,13 +60,32 @@ def validar_direccion(direc):
 
 def validar_horario(msj="Ingrese la consulta: "):
     """ Funcion para formatear el ingreso de una fecha a traves de / o - """
-    año_actual = datetime.datetime.now().year
+    
     while True:
         consulta = input(msj)
         fecha = consulta.replace("/", " ").replace(":", " ").replace("-", " ")
         try:
             d, m, y, hora, minuto = map(int, fecha.split())
-            if not (1 <= d <= 31 and 1 <= m <= 12 and 2025 <= y <= año_actual and 0 <= hora <= 23 and 0 <= minuto <= 59):
+            valido = True
+            
+            if (y % 4 == 0 and y % 100 != 0) or (y % 400 == 0):
+                n = 29
+            else:
+                n = 28
+            
+            dias_posibles = (31,n,31,30,31,30,31,31,30,31,30,31)
+            
+            if y <= 0 or y > 9999:
+                valido = False
+            elif m <= 0 or m > 12:
+                valido = False
+            elif (d < 1) or (d > dias_posibles[m - 1]):
+                valido = False
+            elif hora < 0 or hora > 23:
+                valido = False
+            elif minuto < 0 or minuto > 59:
+                valido = False
+            if not valido:
                 raise ValueError
             lista_numeros = f"{d:02d}/{m:02d}/{y} {hora:02d}:{minuto:02d}"
             break
@@ -82,7 +101,6 @@ def formato_fechas():
     return fecha_final
 
 def guardar_archivo_append(registro):
-    """Agrega en pedidos.txt en modo append"""
     try:
         pedido = open("pedidos.txt", "at")
         registro = ";".join(registro)
@@ -596,6 +614,9 @@ def devoluciones():
     """
 
     codigo_devolucion = input("\n↩️  --- Devoluciones ---\nIngrese el codigo del pedido a devolver: ").upper()
+    while codigo_devolucion[ :3] != "ENV" or not codigo_devolucion[3: ].isdigit() or len(codigo_devolucion[3: ]) < 3:
+            print("Ingreso incorrecto. Debe ser formato ENVXXX, intente nuevamente")
+            codigo_devolucion = (input("\nIngrese el codigo de tracking del pedido a devolver: ")).upper()
 
     encontrado = False  
     try:#apertura de archivos#
@@ -756,5 +777,3 @@ while True:
             cambiar_estado()
         case 5:
             devoluciones()
-
-
