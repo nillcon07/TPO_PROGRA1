@@ -82,6 +82,7 @@ def formato_fechas():
     return fecha_final
 
 def guardar_archivo_append(registro):
+    """Agrega en pedidos.txt en modo append"""
     try:
         pedido = open("pedidos.txt", "at")
         registro = ";".join(registro)
@@ -755,4 +756,5 @@ while True:
             cambiar_estado()
         case 5:
             devoluciones()
+
 
