@@ -531,7 +531,7 @@ def cambiar_estado():
 
                 partes = separar_campos(linea)
                 codigo = partes[1]  # el código está en la posición 1
-                estado_actual = partes[5]
+                estado_actual = partes[5]    # el estado actual está en la posición 5
 
                 if codigo == codigo_objetivo:
                     encontrado = True
@@ -549,6 +549,7 @@ def cambiar_estado():
                     opcion = input("\nEscoja una opción: ")
                     opcion = validar_opciones(opcion, 0, 5)
 
+                      #Si elige volver al menu, no se modifica más#
                     if opcion == 0:
                         print("Volviendo al menú principal...")
                         volver = False
@@ -558,6 +559,7 @@ def cambiar_estado():
                     estados_a_modificar = ("Pendiente", "Despachado", "En camino", "Entregado", "Cancelar pedido")
                     nuevo_estado = estados_a_modificar[opcion - 1]
 
+                    # Confirmación de cambio de estado
                     seguridad = input(f"\nUsted seleccionó '{nuevo_estado}' para el pedido {codigo}. ¿Desea confirmar? [Si/No]: ").lower()
                     print("-"*100)
                     if seguridad != "si":
@@ -565,12 +567,12 @@ def cambiar_estado():
                         temporal.write(linea) 
                         continue
 
-                    # Reglas de validación
+                    # Restriccion: si el pedido fue decvuelto no se puede cambiar su estado#
                     if estado_actual[:8] == "Devuelto":
                         print("❌ No se puede cambiar el estado de un pedido que ya fue devuelto.")
                         temporal.write(linea)
                         continue
-
+                    # Restriccion: no se puede cancelar un pedido ya entregado#
                     if estado_actual == "Entregado" and nuevo_estado == "Cancelar pedido":
                         print("❌ No se puede cancelar un pedido que ya fue entregado.")
                         temporal.write(linea)
@@ -587,13 +589,15 @@ def cambiar_estado():
                     print(f"✅ Pedido {codigo} actualizado a estado: {nuevo_estado}")
                 else:
                     temporal.write(linea)
-                    
-            original.close()
+
+            original.close() 
             temporal.close()
-            
+
+            # Reemplazo del archivo original por el temporal si se encontró el pedido
             if encontrado:
                 os.replace("pedidostemp.txt", "pedidos.txt")
             else:
+                #Si no se encontró el pedido, se elimina el archivo temporal
                 os.remove("pedidostemp.txt")
                 print("❌ No se encontró un pedido con ese código.")
             
