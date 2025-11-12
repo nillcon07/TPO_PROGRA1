@@ -1,7 +1,9 @@
-#FUNCIONES PARA RESTRICCIONES#
-
 import datetime
 import os
+
+#-----------------------------------------------------
+#FUNCIONES PARA RESTRICCIONES
+#-----------------------------------------------------
 
 def validar_opciones(seleccion,rango1,rango2):
     """
@@ -148,7 +150,9 @@ def sacar_acentos(entrada):
         entrada = entrada.replace(i,j)
     return entrada
 
-#FUNCIONES PRINCIPALES#
+#-----------------------------------------------------
+#FUNCIONES PRINCIPALES
+#-----------------------------------------------------
 
 def codigo_envio(numero):
     """
@@ -159,7 +163,7 @@ def codigo_envio(numero):
     
     return codigo1, numero
 
-def agregar_envio(contador1): #Contador sirve para q se hagan las iteraciones, las toma cuando llama a codigo_envio
+def agregar_envio(contador1): 
     """
     Agrega un nuevo envío al sistema solicitando datos del cliente.
     Valida el nombre del cliente (solo letras y espacios) y la dirección.
@@ -201,9 +205,9 @@ def agregar_envio(contador1): #Contador sirve para q se hagan las iteraciones, l
     print()
     print("-" * 100)
     print("✅ Envio agregado con exito")
-    print(f"\n👥 Total clientes (filas): {contador1}") #Se informa el total de los clientes
+    print(f"\n👥 Total clientes (filas): {contador1}") 
     
-    return contador1 # devolvemos contador actualizado 
+    return contador1 
 
 def consultar_envio():
     """
@@ -672,7 +676,10 @@ def devoluciones():
             devoluciones()
         except RecursionError as e:
             print(f"Maximo de operaciones alcanzadas en Devoluciones {e}") #manejo de error en caso de muchas devoluciones#
+
+#-----------------------------------------------------
 #PROGRAMA PRINCIPAL
+#-----------------------------------------------------
 
 #inicializacion del contador de envíos "n"
 while True:
@@ -720,6 +727,7 @@ while True:
         print("No se puede leer el archivo:", mensaje)
         n = 0
 
+# MENU PRINCIPAL
 
 archivo_verificado = False
 archivo_tiene_datos = False
@@ -737,7 +745,7 @@ while True:
     print()
     opcion = validar_opciones(opcion, 0, 5)
 
-    if opcion in [2, 3, 4, 5]: #cualquier opcion que no sea agregar pedido o salir#
+    if opcion in [2, 3, 4, 5]: #cualquier opcion que no sea agregar pedido o salir
         if not archivo_verificado:
             try:
                 archivo = open("pedidos.txt", "rt")
@@ -761,7 +769,8 @@ while True:
             print("\n⚠️  No hay ningún pedido en el archivo para usar esta función, cree uno primero.\n")
             continue
 
-    #Menu
+# SE LLAMAN A TODAS LAS FUNCIONES PARA CARGAR LOS DISTINTOS MENUS
+
     match opcion:
         case 0:
             print("Nos vemos! 👋")
