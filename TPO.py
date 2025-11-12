@@ -588,9 +588,6 @@ def cambiar_estado():
                 else:
                     temporal.write(linea)
 
-            original.close() ###No esta cerrandose ya abajo##
-            temporal.close()
-
             if encontrado:
                 os.replace("pedidostemp.txt", "pedidos.txt")
             else:
@@ -786,3 +783,4 @@ while True:
             cambiar_estado()
         case 5:
             devoluciones()
+
