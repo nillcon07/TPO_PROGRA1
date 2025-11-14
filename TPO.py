@@ -179,7 +179,7 @@ def agregar_envio(contador1):
     
     provincia = input("\nIngrese la provincia de destino: ").title()
     provincia = sacar_acentos(provincia)
-    provincias = ("Buenos Aires", "Catamarca", "Chaco", "Chubut", "Cordoba", "Corrientes", "Entre Rios", "Formosa", "Jujuy", "La Pampa", "La Rioja", "Mendoza", "Misiones", "Neuquen", "Rio Negro", "Salta", "San Juan", "San Luis", "Santa Cruz", "Santa Fe", "Santiago del Estero", "Tierra del Fuego", "Tucuman")
+    provincias = ("Buenos Aires", "Catamarca", "Chaco", "Chubut", "Cordoba", "Corrientes", "Entre Rios", "Formosa", "Jujuy", "La Pampa", "La Rioja", "Mendoza", "Misiones", "Neuquen", "Rio Negro", "Salta", "San Juan", "San Luis", "Santa Cruz", "Santa Fe", "Santiago Del Estero", "Tierra Del Fuego", "Tucuman")
     while provincia not in provincias:
         provincia = input("\nIngreso invalido, reintente\nIngrese la provincia de destino: ").title()
         provincia = sacar_acentos(provincia)
@@ -323,7 +323,7 @@ def historial_envios():
             
             #se inicializa fuera del match case ya que sera usado en mas de dos cases
             estados = ("Pendiente", "Despachado", "En camino", "Entregado", "Cancelado", "Devuelto")
-            provincias = ("Buenos Aires", "Catamarca", "Chaco", "Chubut", "Cordoba", "Corrientes", "Entre Rios", "Formosa", "Jujuy", "La Pampa", "La Rioja", "Mendoza", "Misiones", "Neuquen", "Rio Negro", "Salta", "San Juan", "San Luis", "Santa Cruz", "Santa Fe", "Santiago del Estero", "Tierra del Fuego", "Tucuman")
+            provincias = ("Buenos Aires", "Catamarca", "Chaco", "Chubut", "Cordoba", "Corrientes", "Entre Rios", "Formosa", "Jujuy", "La Pampa", "La Rioja", "Mendoza", "Misiones", "Neuquen", "Rio Negro", "Salta", "San Juan", "San Luis", "Santa Cruz", "Santa Fe", "Santiago Del Estero", "Tierra Del Fuego", "Tucuman")
             total = 0
 
             match opcion:
